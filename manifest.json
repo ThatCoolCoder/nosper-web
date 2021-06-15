@@ -1,0 +1,14 @@
+{
+    "manifest_version": 2,
+    "name": "Nalton Calculator",
+    "version": "1.0",
+    "description": "An actually good calculator extension",
+    "permissions": ["declarativeContent", "storage", "tabs"],
+    "browser_action": {
+        "default_title": "Nalton Calculator"
+    },
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    }
+}
