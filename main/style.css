@@ -1,3 +1,17 @@
 * {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
+
+body {
+    background-image: url('logoLarge.png');
+    background-size: 100vh 100vh;
+}
+
+h1 {
+    text-shadow: 2px 2px white;
+}
+
+#mainInput {
+    width: 50vw;
+    font-size: 20px;
+}

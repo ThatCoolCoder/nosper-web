@@ -6,6 +6,88 @@ class Evaluator {
         }
     }
 
+    static tokenTypes = {
+        // Non-operators
+        number : 'number',
+        lParen : 'lParen',
+        rParen : 'rParen',
+        var : 'var', // as in a token representing a variable
+    
+        // Operators
+        plus : 'plus',
+        minus : 'minus',
+        mult : 'mult',
+        div : 'div',
+        power : 'power',
+        assign : 'assign'
+    }
+    
+    static operatorPrecedence = {
+        [this.tokenTypes.assign] : 0,
+        [this.tokenTypes.plus] : 1,
+        [this.tokenTypes.minus] : 1,
+        [this.tokenTypes.mult] : 2,
+        [this.tokenTypes.div] : 2,
+        [this.tokenTypes.power] : 3
+    };
+    
+    static MathToken = class {
+        constructor(type, value='') {
+            this.type = type;
+            this.value = value;
+        }
+    }
+
+    // A token of type <key in dict> must be followed by type <value of key>
+    static validGrammar = {
+        // Not operators
+        [this.tokenTypes.number] : [
+            this.tokenTypes.plus, this.tokenTypes.minus,
+            this.tokenTypes.mult, this.tokenTypes.div,
+            this.tokenTypes.power, this.tokenTypes.rParen
+        ],
+        [this.tokenTypes.lParen] : [
+            this.tokenTypes.number, this.tokenTypes.var
+        ],
+        [this.tokenTypes.rParen] : [
+            this.tokenTypes.plus, this.tokenTypes.minus,
+            this.tokenTypes.mult, this.tokenTypes.div,
+            this.tokenTypes.power
+        ],
+        [this.tokenTypes.var] : [
+            this.tokenTypes.plus, this.tokenTypes.minus,
+            this.tokenTypes.mult, this.tokenTypes.div,
+            this.tokenTypes.power, this.tokenTypes.assign
+        ],
+
+        // Operators
+
+        [this.tokenTypes.plus] : [
+            this.tokenTypes.number, this.tokenTypes.var,
+            this.tokenTypes.lParen
+        ],
+        [this.tokenTypes.minus] : [
+            this.tokenTypes.number, this.tokenTypes.var,
+            this.tokenTypes.lParen
+        ],
+        [this.tokenTypes.mult] : [
+            this.tokenTypes.number, this.tokenTypes.var,
+            this.tokenTypes.lParen
+        ],
+        [this.tokenTypes.div] : [
+            this.tokenTypes.number, this.tokenTypes.var,
+            this.tokenTypes.lParen
+        ],
+        [this.tokenTypes.power] : [
+            this.tokenTypes.number, this.tokenTypes.var,
+            this.tokenTypes.lParen
+        ],
+        [this.tokenTypes.assign] : [
+            this.tokenTypes.number, this.tokenTypes.var,
+            this.tokenTypes.lParen
+        ]
+    }
+
     constructor() {
         this.memory = {};
     }
@@ -13,23 +95,24 @@ class Evaluator {
     evaluate(expression) {
         var tokens = this.tokeniseExpression(expression);
 
-        // Wrap whole thing in parenthesis to simplify
-        //tokens.unshift(new MathToken(tokenTypes.lParen));
-        //tokens.push(new MathToken(tokenTypes.rParen));
-
         tokens = this.insertImplicitMultSigns(tokens);
 
+        console.log(tokens);
+
         if (! this.syntaxValid(tokens)) {
-            throw Evaluator.MathSyntaxError();
+            throw new Evaluator.MathSyntaxError();
         }
 
-        // If there's one token then just skip it
-        if (tokens.length == 1) {
-            return this.tryReadVar(tokens[0]);
-        }
+        // Wrap whole thing in parenthesis to simplify
+        tokens.unshift(new Evaluator.MathToken(Evaluator.tokenTypes.lParen));
+        tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.rParen));
+
+        var maxIterations = 5;
+        var safetyCounter = 0;
 
         // While the expression is not fully resolved:
-        while (tokens.length > 1) {
+        while (tokens.length > 3 && safetyCounter < maxIterations) {
+
             // Find which bit to work out first
             var targetOperationIdx = 
                 this.findHighestPrecedenceOperationIdx(tokens);
@@ -42,9 +125,10 @@ class Evaluator {
             
             // Put the result in the tokens
             tokens.splice(targetOperationIdx - 1, 3, result);
+            safetyCounter += 1;
         }
     
-        return tokens[0].value
+        return this.tryReadVar(tokens[1]);
     }
     
     tokeniseExpression(expression) {
@@ -54,38 +138,38 @@ class Evaluator {
             var crntChar = expression[charIdx];
     
             if (crntChar == '+') {
-                tokens.push(new MathToken(tokenTypes.plus));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.plus));
                 charIdx ++;
             }
             else if (crntChar == '-') {
-                tokens.push(new MathToken(tokenTypes.minus));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.minus));
                 charIdx ++;
             }
             else if (crntChar == '/') {
-                tokens.push(new MathToken(tokenTypes.div));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.div));
                 charIdx ++;
             }
             else if (crntChar == '^') {
-                tokens.push(new MathToken(tokenTypes.power));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.power));
                 charIdx ++;
             }
             else if (crntChar == '*') {
                 // If these two chars == '**', then it's power and not mult
                 if (expression[charIdx + 1] == '*') {
-                    tokens.push(new MathToken(tokenTypes.power));
+                    tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.power));
                     charIdx += 2;
                 }
                 else {
-                    tokens.push(new MathToken(tokenTypes.mult));
+                    tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.mult));
                     charIdx ++;
                 }
             }
             else if (crntChar == '(') {
-                tokens.push(new MathToken(tokenTypes.lParen));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.lParen));
                 charIdx ++;
             }
             else if (crntChar == ')') {
-                tokens.push(new MathToken(tokenTypes.rParen));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.rParen));
                 charIdx ++;
             }
             else if (wrk.str.digits.includes(crntChar)) {
@@ -97,7 +181,7 @@ class Evaluator {
                     charIdx ++;
                     crntChar = expression[charIdx];
                 }
-                tokens.push(new MathToken(tokenTypes.number, Number(numberVal)));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.number, Number(numberVal)));
             }
             else if (crntChar.toLowerCase() == 'e') {
                 // Try to read number like 6 * e10
@@ -109,14 +193,14 @@ class Evaluator {
                     crntChar = expression[charIdx];
                 }
                 var value = 10 ** Number(numberVal).
-                tokens.push(new MathToken(tokenTypes.number, value));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.number, value));
             }
             else if (crntChar == '=') {
-                tokens.push(new MathToken(tokenTypes.assign));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.assign));
                 charIdx ++;
             }
             else if (wrk.str.lowerAlphabet.includes(crntChar.toLowerCase())) {
-                tokens.push(new MathToken(tokenTypes.var, crntChar));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.var, crntChar));
                 charIdx ++;
             }
             else {
@@ -134,9 +218,12 @@ class Evaluator {
         // then add a multiplication sign
         for (var i = 0; i < tokens.length - 1; i ++) {
             newTokens.push(tokens[i]);
-            if (tokens[i].type == tokenTypes.number &&
-                tokens[i + 1].type == tokenTypes.number)
-                newTokens.push(new MathToken(tokenTypes.mult));
+            var crntTokenIsNumber = (tokens[i].type == Evaluator.tokenTypes.number ||
+                tokens[i].type == Evaluator.tokenTypes.var);
+            var nextTokenIsNumber = (tokens[i + 1].type == Evaluator.tokenTypes.number ||
+                tokens[i + 1].type == Evaluator.tokenTypes.var);
+            if (crntTokenIsNumber && nextTokenIsNumber)
+                newTokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.mult));
         }
         // Add the last token, which was omitted in the loop
         newTokens.push(tokens[tokens.length - 1]);
@@ -144,24 +231,26 @@ class Evaluator {
     }
 
     syntaxValid(tokens) {
-        // Current rudimentary syntax checker (or is it called a grammar checker?)
-        // Check that the tokens follow a pattern:
-        // <number> <operator or bracket> <number> <operator or bracket>
-        // And check that the amount of open brackets is the amount of close brackets
+        // Check that each token in the tokens
+        // Is followed by a valid other token
 
-        var lastTokenWasNumber = tokens[0].type == tokenTypes.number;
-        var nestingLevel = 0;
+        if (tokens[0].type == 'lParen') var nestingLevel = 1;
+        else if (tokens[0].type == 'rParen') return false;
+        else var nestingLevel = 0;
+
         var valid = true;
         for (var i = 1; i < tokens.length; i ++) {
-            var thisTokenIsNumber = tokens[i].type == tokenTypes.number;
-            // Tokens must alternate between being number and not being number!
-            if (lastTokenWasNumber == thisTokenIsNumber) {
+            var prevToken = tokens[i - 1];
+            var crntToken = tokens[i];
+
+            if (crntToken.type == Evaluator.tokenTypes.lParen) nestingLevel += 1;
+            if (crntToken.type == Evaluator.tokenTypes.rParen) nestingLevel -= 1;
+
+            var validTokens = Evaluator.validGrammar[prevToken.type];
+            if (! validTokens.includes(crntToken.type)) {
                 valid = false;
                 break;
             }
-            if (tokens[i].type == tokenTypes.lParen) nestingLevel += 1;
-            if (tokens[i].type == tokenTypes.rParen) nestingLevel -= 1;
-            lastTokenWasNumber = thisTokenIsNumber;
         }
         if (nestingLevel != 0) valid = false;
 
@@ -172,32 +261,46 @@ class Evaluator {
         // If the token is a number, then return that
         // If the token is a var, return the val of that var
 
-        if (token.type == tokenTypes.number) return token.value;
+        if (token.type == Evaluator.tokenTypes.number) return token.value;
         else return this.memory[token.value] || 0;
     }
 
     evaluateOperator(operatorToken, token1, token2) {
         var newNumberVal = 0;
-        if (operatorToken.type == tokenTypes.plus) {
+        if (operatorToken.type == Evaluator.tokenTypes.plus) {
             newNumberVal = this.tryReadVar(token1) + this.tryReadVar(token2);
         }
-        else if (operatorToken.type == tokenTypes.minus) {
+        else if (operatorToken.type == Evaluator.tokenTypes.minus) {
             newNumberVal = this.tryReadVar(token1) - this.tryReadVar(token2);
         }
-        else if (operatorToken.type == tokenTypes.mult) {
+        else if (operatorToken.type == Evaluator.tokenTypes.mult) {
             newNumberVal = this.tryReadVar(token1) * this.tryReadVar(token2);
         }
-        else if (operatorToken.type == tokenTypes.div) {
+        else if (operatorToken.type == Evaluator.tokenTypes.div) {
             newNumberVal = this.tryReadVar(token1) / this.tryReadVar(token2);
         }
-        else if (operatorToken.type == tokenTypes.power) {
+        else if (operatorToken.type == Evaluator.tokenTypes.power) {
             newNumberVal = this.tryReadVar(token1) ** this.tryReadVar(token2);
         }
-        else if (operatorToken.type == tokenTypes.assign) {
+        else if (operatorToken.type == Evaluator.tokenTypes.assign) {
             this.memory[token1.value] = token2.value;
             newNumberVal = token2.value;
         }
-        return new MathToken(tokenTypes.number, newNumberVal);
+        return new Evaluator.MathToken(Evaluator.tokenTypes.number, newNumberVal);
+    }
+
+    removeEmptyParenthesis(tokens) {
+        var newTokens = [];
+        for (var i = 0; i < tokens.length; i ++) {
+            if (tokens[i].type == Evaluator.tokenTypes.lParen &&
+                tokens[i + 1].type == Evaluator.tokenTypes.rParen) {
+                i ++; // If iyt's the start of empty paren, do nothing and skip next token
+            }
+            else {
+                newTokens.push(tokens[i]);
+            }
+        }
+        return newTokens;
     }
 
     findHighestIndent(tokens) {
@@ -206,10 +309,10 @@ class Evaluator {
         var highestIndentAmount = 0;
         var crntIndentAmount = 0;
         tokens.forEach((token, idx) => {
-            if (token.type == tokenTypes.lParen)  {
+            if (token.type == Evaluator.tokenTypes.lParen)  {
                 crntIndentAmount ++;
             }
-            else if (token.type == tokenTypes.rParen) {
+            else if (token.type == Evaluator.tokenTypes.rParen) {
                 crntIndentAmount --;
             }
 
@@ -223,7 +326,7 @@ class Evaluator {
                 // But will be correct for the highest-indented, and that's what matters
                 highestIndentEnd = highestIndentStart + 1;
                 for (var i = highestIndentStart; i < tokens.length; i ++) {
-                    if (tokens[i].type == tokenTypes.rParen) {
+                    if (tokens[i].type == Evaluator.tokenTypes.rParen) {
                         highestIndentEnd = i;
                         break;
                     }
@@ -241,7 +344,7 @@ class Evaluator {
         var highestOperatorPrecedence = -1;
         var highestPrecedenceIdx = null;
         highestIndentSection.forEach((token, idx) => {
-            var thisTokenPrecedence = operatorPrecedence[token.type];
+            var thisTokenPrecedence = Evaluator.operatorPrecedence[token.type];
             if (thisTokenPrecedence != undefined &&
                 thisTokenPrecedence > highestOperatorPrecedence) {
                 highestOperatorPrecedence = thisTokenPrecedence;
@@ -249,36 +352,5 @@ class Evaluator {
             }
         });
         return highestPrecedenceIdx + highestIndentData.start;
-    }
-}
-
-const tokenTypes = {
-    // Non-operators
-    number : 'number',
-    lParen : 'lParen',
-    rParen : 'rParen',
-    var : 'var', // as in a token representing a variable
-
-    // Operators
-    plus : 'plus',
-    minus : 'minus',
-    mult : 'mult',
-    div : 'div',
-    power : 'power',
-    assign : 'assign'
-}
-
-const operatorPrecedence = {}
-operatorPrecedence[tokenTypes.assign] = 0;
-operatorPrecedence[tokenTypes.plus] = 1;
-operatorPrecedence[tokenTypes.minus] = 1;
-operatorPrecedence[tokenTypes.mult] = 2;
-operatorPrecedence[tokenTypes.div] = 2;
-operatorPrecedence[tokenTypes.power] = 3;
-
-class MathToken {
-    constructor(type, value='') {
-        this.type = type;
-        this.value = value;
     }
 }

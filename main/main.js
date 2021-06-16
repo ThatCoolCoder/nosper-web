@@ -8,6 +8,7 @@ function calculate() {
         var result = evaluator.evaluate(expression);
     }
     catch (err) {
+        console.log(err);
         if (err instanceof Evaluator.MathSyntaxError) {
             var result = 'Syntax error in equation';
         }
