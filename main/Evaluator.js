@@ -7,28 +7,29 @@ class Evaluator {
     }
 
     static tokenTypes = {
-        // Non-operators
-        number : 'number',
-        lParen : 'lParen',
-        rParen : 'rParen',
-        var : 'var', // as in a token representing a variable
-    
-        // Operators
-        plus : 'plus',
-        minus : 'minus',
-        mult : 'mult',
-        div : 'div',
-        power : 'power',
-        assign : 'assign'
+        nonOperator : {
+            number : 'number',
+            lParen : 'lParen',
+            rParen : 'rParen',
+            var : 'var', // as in a token representing a variable
+        },
+        operator : {
+            plus : 'plus',
+            minus : 'minus',
+            mult : 'mult',
+            div : 'div',
+            power : 'power',
+            assign : 'assign'
+        }
     }
     
     static operatorPrecedence = {
-        [this.tokenTypes.assign] : 0,
-        [this.tokenTypes.plus] : 1,
-        [this.tokenTypes.minus] : 1,
-        [this.tokenTypes.mult] : 2,
-        [this.tokenTypes.div] : 2,
-        [this.tokenTypes.power] : 3
+        [this.tokenTypes.operator.assign] : 0,
+        [this.tokenTypes.operator.plus] : 1,
+        [this.tokenTypes.operator.minus] : 1,
+        [this.tokenTypes.operator.mult] : 2,
+        [this.tokenTypes.operator.div] : 2,
+        [this.tokenTypes.operator.power] : 3
     };
     
     static MathToken = class {
@@ -38,53 +39,77 @@ class Evaluator {
         }
     }
 
+    static SyntaxTreeNode = class {
+        constructor(leftHandToken, operatorToken, rightHandToken) {
+            this.leftHandToken = leftHandToken;
+            this.operatorToken = operatorToken;
+            this.rightHandToken = rightHandToken;
+        }
+
+        evaluateChild(child, evaluateFunc) {
+            if (child instanceof Evaluator.SyntaxTreeNode) {
+                return child.evaluate(evaluateFunc);
+            }
+            else {
+                return child;
+            }
+        }
+
+        evaluate(evaluateFunc) {
+            // First substitute
+            var leftHandToken = this.evaluateChild(this.leftHandToken, evaluateFunc);
+            var rightHandToken = this.evaluateChild(this.rightHandToken, evaluateFunc);
+
+            return evaluateFunc(leftHandToken, this.operatorToken, rightHandToken);
+        }
+    }
+
     // A token of type <key in dict> must be followed by type <value of key>
     static validGrammar = {
         // Not operators
-        [this.tokenTypes.number] : [
-            this.tokenTypes.plus, this.tokenTypes.minus,
-            this.tokenTypes.mult, this.tokenTypes.div,
-            this.tokenTypes.power, this.tokenTypes.rParen
+        [this.tokenTypes.nonOperator.number] : [
+            this.tokenTypes.operator.plus, this.tokenTypes.operator.minus,
+            this.tokenTypes.operator.mult, this.tokenTypes.operator.div,
+            this.tokenTypes.operator.power, this.tokenTypes.nonOperator.rParen
         ],
-        [this.tokenTypes.lParen] : [
-            this.tokenTypes.number, this.tokenTypes.var
+        [this.tokenTypes.nonOperator.lParen] : [
+            this.tokenTypes.nonOperator.number, this.tokenTypes.nonOperator.var
         ],
-        [this.tokenTypes.rParen] : [
-            this.tokenTypes.plus, this.tokenTypes.minus,
-            this.tokenTypes.mult, this.tokenTypes.div,
-            this.tokenTypes.power
+        [this.tokenTypes.nonOperator.rParen] : [
+            this.tokenTypes.operator.plus, this.tokenTypes.operator.minus,
+            this.tokenTypes.operator.mult, this.tokenTypes.operator.div,
+            this.tokenTypes.operator.power
         ],
-        [this.tokenTypes.var] : [
-            this.tokenTypes.plus, this.tokenTypes.minus,
-            this.tokenTypes.mult, this.tokenTypes.div,
-            this.tokenTypes.power, this.tokenTypes.assign
+        [this.tokenTypes.nonOperator.var] : [
+            this.tokenTypes.operator.plus, this.tokenTypes.operator.minus,
+            this.tokenTypes.operator.mult, this.tokenTypes.operator.div,
+            this.tokenTypes.operator.power, this.tokenTypes.operator.assign
         ],
 
         // Operators
-
-        [this.tokenTypes.plus] : [
-            this.tokenTypes.number, this.tokenTypes.var,
-            this.tokenTypes.lParen
+        [this.tokenTypes.operator.plus] : [
+            this.tokenTypes.nonOperator.number, this.tokenTypes.nonOperator.var,
+            this.tokenTypes.nonOperator.lParen
         ],
-        [this.tokenTypes.minus] : [
-            this.tokenTypes.number, this.tokenTypes.var,
-            this.tokenTypes.lParen
+        [this.tokenTypes.operator.minus] : [
+            this.tokenTypes.nonOperator.number, this.tokenTypes.nonOperator.var,
+            this.tokenTypes.nonOperator.lParen
         ],
-        [this.tokenTypes.mult] : [
-            this.tokenTypes.number, this.tokenTypes.var,
-            this.tokenTypes.lParen
+        [this.tokenTypes.operator.mult] : [
+            this.tokenTypes.nonOperator.number, this.tokenTypes.nonOperator.var,
+            this.tokenTypes.nonOperator.lParen
         ],
-        [this.tokenTypes.div] : [
-            this.tokenTypes.number, this.tokenTypes.var,
-            this.tokenTypes.lParen
+        [this.tokenTypes.operator.div] : [
+            this.tokenTypes.nonOperator.number, this.tokenTypes.nonOperator.var,
+            this.tokenTypes.nonOperator.lParen
         ],
-        [this.tokenTypes.power] : [
-            this.tokenTypes.number, this.tokenTypes.var,
-            this.tokenTypes.lParen
+        [this.tokenTypes.operator.power] : [
+            this.tokenTypes.nonOperator.number, this.tokenTypes.nonOperator.var,
+            this.tokenTypes.nonOperator.lParen
         ],
-        [this.tokenTypes.assign] : [
-            this.tokenTypes.number, this.tokenTypes.var,
-            this.tokenTypes.lParen
+        [this.tokenTypes.operator.assign] : [
+            this.tokenTypes.nonOperator.number, this.tokenTypes.nonOperator.var,
+            this.tokenTypes.nonOperator.lParen
         ]
     }
 
@@ -103,32 +128,10 @@ class Evaluator {
             throw new Evaluator.MathSyntaxError();
         }
 
-        // Wrap whole thing in parenthesis to simplify
-        tokens.unshift(new Evaluator.MathToken(Evaluator.tokenTypes.lParen));
-        tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.rParen));
-
-        var maxIterations = 5;
-        var safetyCounter = 0;
-
-        // While the expression is not fully resolved:
-        while (tokens.length > 3 && safetyCounter < maxIterations) {
-
-            // Find which bit to work out first
-            var targetOperationIdx = 
-                this.findHighestPrecedenceOperationIdx(tokens);
-            
-            // Work that out
-            var operatorToken = tokens[targetOperationIdx];
-            var token1 = tokens[targetOperationIdx - 1];
-            var token2 = tokens[targetOperationIdx + 1];
-            var result = this.evaluateOperator(operatorToken, token1, token2);
-            
-            // Put the result in the tokens
-            tokens.splice(targetOperationIdx - 1, 3, result);
-            safetyCounter += 1;
-        }
-    
-        return this.tryReadVar(tokens[1]);
+        var syntaxTree = this.buildSyntaxTree(tokens);
+        var result = syntaxTree.evaluate(this.evaluateOperator.bind(this));
+        console.log(result);
+        return this.tryReadVar(result);
     }
     
     tokeniseExpression(expression) {
@@ -138,38 +141,38 @@ class Evaluator {
             var crntChar = expression[charIdx];
     
             if (crntChar == '+') {
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.plus));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.operator.plus));
                 charIdx ++;
             }
             else if (crntChar == '-') {
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.minus));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.operator.minus));
                 charIdx ++;
             }
             else if (crntChar == '/') {
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.div));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.operator.div));
                 charIdx ++;
             }
             else if (crntChar == '^') {
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.power));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.operator.power));
                 charIdx ++;
             }
             else if (crntChar == '*') {
                 // If these two chars == '**', then it's power and not mult
                 if (expression[charIdx + 1] == '*') {
-                    tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.power));
+                    tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.operator.power));
                     charIdx += 2;
                 }
                 else {
-                    tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.mult));
+                    tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.operator.mult));
                     charIdx ++;
                 }
             }
             else if (crntChar == '(') {
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.lParen));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.nonOperator.lParen));
                 charIdx ++;
             }
             else if (crntChar == ')') {
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.rParen));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.nonOperator.rParen));
                 charIdx ++;
             }
             else if (wrk.str.digits.includes(crntChar)) {
@@ -181,7 +184,7 @@ class Evaluator {
                     charIdx ++;
                     crntChar = expression[charIdx];
                 }
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.number, Number(numberVal)));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.nonOperator.number, Number(numberVal)));
             }
             else if (crntChar.toLowerCase() == 'e') {
                 // Try to read number like 6 * e10
@@ -193,14 +196,14 @@ class Evaluator {
                     crntChar = expression[charIdx];
                 }
                 var value = 10 ** Number(numberVal).
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.number, value));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.nonOperator.number, value));
             }
             else if (crntChar == '=') {
                 tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.assign));
                 charIdx ++;
             }
             else if (wrk.str.lowerAlphabet.includes(crntChar.toLowerCase())) {
-                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.var, crntChar));
+                tokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.nonOperator.var, crntChar));
                 charIdx ++;
             }
             else {
@@ -218,12 +221,12 @@ class Evaluator {
         // then add a multiplication sign
         for (var i = 0; i < tokens.length - 1; i ++) {
             newTokens.push(tokens[i]);
-            var crntTokenIsNumber = (tokens[i].type == Evaluator.tokenTypes.number ||
-                tokens[i].type == Evaluator.tokenTypes.var);
-            var nextTokenIsNumber = (tokens[i + 1].type == Evaluator.tokenTypes.number ||
-                tokens[i + 1].type == Evaluator.tokenTypes.var);
+            var crntTokenIsNumber = (tokens[i].type == Evaluator.tokenTypes.nonOperator.number ||
+                tokens[i].type == Evaluator.tokenTypes.nonOperator.var);
+            var nextTokenIsNumber = (tokens[i + 1].type == Evaluator.tokenTypes.nonOperator.number ||
+                tokens[i + 1].type == Evaluator.tokenTypes.nonOperator.var);
             if (crntTokenIsNumber && nextTokenIsNumber)
-                newTokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.mult));
+                newTokens.push(new Evaluator.MathToken(Evaluator.tokenTypes.operator.mult));
         }
         // Add the last token, which was omitted in the loop
         newTokens.push(tokens[tokens.length - 1]);
@@ -234,8 +237,8 @@ class Evaluator {
         // Check that each token in the tokens
         // Is followed by a valid other token
 
-        if (tokens[0].type == 'lParen') var nestingLevel = 1;
-        else if (tokens[0].type == 'rParen') return false;
+        if (tokens[0].type == Evaluator.tokenTypes.nonOperator.lParen) var nestingLevel = 1;
+        else if (tokens[0].type == Evaluator.tokenTypes.nonOperator.rParen) return false;
         else var nestingLevel = 0;
 
         var valid = true;
@@ -243,8 +246,8 @@ class Evaluator {
             var prevToken = tokens[i - 1];
             var crntToken = tokens[i];
 
-            if (crntToken.type == Evaluator.tokenTypes.lParen) nestingLevel += 1;
-            if (crntToken.type == Evaluator.tokenTypes.rParen) nestingLevel -= 1;
+            if (crntToken.type == Evaluator.tokenTypes.nonOperator.lParen) nestingLevel += 1;
+            if (crntToken.type == Evaluator.tokenTypes.nonOperator.rParen) nestingLevel -= 1;
 
             var validTokens = Evaluator.validGrammar[prevToken.type];
             if (! validTokens.includes(crntToken.type)) {
@@ -261,39 +264,63 @@ class Evaluator {
         // If the token is a number, then return that
         // If the token is a var, return the val of that var
 
-        if (token.type == Evaluator.tokenTypes.number) return token.value;
+        if (token.type == Evaluator.tokenTypes.nonOperator.number) return token.value;
         else return this.memory[token.value] || 0;
     }
 
-    evaluateOperator(operatorToken, token1, token2) {
+    buildSyntaxTree(tokens) {
+        // This is a somewhat naive function that currently ignores brackets
+        
+        var lastOperatorPrecedence = 0;
+
+        var tokenIdx = 0;
+        var operatorTokenTypes = wrk.obj.values(Evaluator.tokenTypes.operator);
+
+        function goToNextOperator() {
+            do {
+                tokenIdx ++;
+                if (tokenIdx >= tokens.length - 1) break;
+            } while (! operatorTokenTypes.includes(tokens[tokenIdx].type));
+            return tokens[tokenIdx];
+        }
+
+        var lastOperator = goToNextOperator();
+        while (tokenIdx < tokens.length) {
+            var crntOperator = goToNextOperator();
+            if (tokenIdx >= tokens.length - 1) break;
+            
+        }
+    }
+
+    evaluateOperator(token1, operatorToken, token2) {
         var newNumberVal = 0;
-        if (operatorToken.type == Evaluator.tokenTypes.plus) {
+        if (operatorToken.type == Evaluator.tokenTypes.operator.plus) {
             newNumberVal = this.tryReadVar(token1) + this.tryReadVar(token2);
         }
-        else if (operatorToken.type == Evaluator.tokenTypes.minus) {
+        else if (operatorToken.type == Evaluator.tokenTypes.operator.minus) {
             newNumberVal = this.tryReadVar(token1) - this.tryReadVar(token2);
         }
-        else if (operatorToken.type == Evaluator.tokenTypes.mult) {
+        else if (operatorToken.type == Evaluator.tokenTypes.operator.mult) {
             newNumberVal = this.tryReadVar(token1) * this.tryReadVar(token2);
         }
-        else if (operatorToken.type == Evaluator.tokenTypes.div) {
+        else if (operatorToken.type == Evaluator.tokenTypes.operator.div) {
             newNumberVal = this.tryReadVar(token1) / this.tryReadVar(token2);
         }
-        else if (operatorToken.type == Evaluator.tokenTypes.power) {
+        else if (operatorToken.type == Evaluator.tokenTypes.operator.power) {
             newNumberVal = this.tryReadVar(token1) ** this.tryReadVar(token2);
         }
-        else if (operatorToken.type == Evaluator.tokenTypes.assign) {
+        else if (operatorToken.type == Evaluator.tokenTypes.operator.assign) {
             this.memory[token1.value] = token2.value;
             newNumberVal = token2.value;
         }
-        return new Evaluator.MathToken(Evaluator.tokenTypes.number, newNumberVal);
+        return new Evaluator.MathToken(Evaluator.tokenTypes.nonOperator.number, newNumberVal);
     }
 
     removeEmptyParenthesis(tokens) {
         var newTokens = [];
         for (var i = 0; i < tokens.length; i ++) {
-            if (tokens[i].type == Evaluator.tokenTypes.lParen &&
-                tokens[i + 1].type == Evaluator.tokenTypes.rParen) {
+            if (tokens[i].type == Evaluator.tokenTypes.nonOperator.lParen &&
+                tokens[i + 1].type == Evaluator.tokenTypes.nonOperator.rParen) {
                 i ++; // If iyt's the start of empty paren, do nothing and skip next token
             }
             else {
@@ -309,10 +336,10 @@ class Evaluator {
         var highestIndentAmount = 0;
         var crntIndentAmount = 0;
         tokens.forEach((token, idx) => {
-            if (token.type == Evaluator.tokenTypes.lParen)  {
+            if (token.type == Evaluator.tokenTypes.nonOperator.lParen)  {
                 crntIndentAmount ++;
             }
-            else if (token.type == Evaluator.tokenTypes.rParen) {
+            else if (token.type == Evaluator.tokenTypes.nonOperator.rParen) {
                 crntIndentAmount --;
             }
 
@@ -326,7 +353,7 @@ class Evaluator {
                 // But will be correct for the highest-indented, and that's what matters
                 highestIndentEnd = highestIndentStart + 1;
                 for (var i = highestIndentStart; i < tokens.length; i ++) {
-                    if (tokens[i].type == Evaluator.tokenTypes.rParen) {
+                    if (tokens[i].type == Evaluator.tokenTypes.nonOperator.rParen) {
                         highestIndentEnd = i;
                         break;
                     }
