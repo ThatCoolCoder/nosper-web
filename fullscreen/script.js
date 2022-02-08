@@ -5,6 +5,7 @@ const evaluator = new Evaluator();
 
 function calculate() {
     var expression = mainInput.value;
+    if (expression == '') return;
     var error = '';
     try {
         var result = evaluator.evaluate(expression);

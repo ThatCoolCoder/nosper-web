@@ -35,7 +35,7 @@ class ValueNode extends SyntaxTreeNode {
     evaluate(evaluationContext) {
         if (typeof (this.value) == 'number') return this.value;
         else if (evaluationContext.variableIsDefined(this.value)) return evaluationContext.getVariable(this.value);
-        // else throw Error("ValueNode.value was not a variable or a number");
+        else return this.value;
     }
 }
 

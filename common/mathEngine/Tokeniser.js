@@ -56,7 +56,7 @@ class Tokeniser {
             }
             else if (spnr.str.digits.includes(this.crntChar)) {
                 // If it's a digit, continue reading a number until we reach the end
-                tokens.push(new Token(TokenType.VALUE, TokenSubType.OTHER, Number(this.readNumber())));
+                tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, Number(this.readNumber())));
             }
             else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan']) != null) {
                 var text = this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan']);
@@ -67,10 +67,10 @@ class Tokeniser {
                 // Try to read number like 6 * e10 (minus the 6 bit)
                 this.next();
                 var value = 10 ** Number(this.readNumber());
-                tokens.push(new Token(TokenType.VALUE, TokenSubType.OTHER, value));
+                tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, value));
             }
             else if (spnr.str.lowerAlphabet.includes(this.crntChar.toLowerCase())) {
-                tokens.push(new Token(TokenType.VALUE, TokenSubType.OTHER, this.crntChar));
+                tokens.push(new Token(TokenType.VALUE, TokenSubType.VARIABLE, this.readString()));
                 this.next();
             }
             else {
@@ -99,6 +99,15 @@ class Tokeniser {
             this.next();
         }
         return numberVal;
+    }
+
+    readString() {
+        var stringVal = '';
+        while (spnr.str.lowerAlphabet.includes(this.crntChar)) {
+            stringVal += this.crntChar;
+            this.next();
+        }
+        return stringVal;
     }
 
     nextCharsEqualTo(targetValue) {

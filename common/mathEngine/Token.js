@@ -26,11 +26,12 @@ const TokenSubType = {
     ARC_TANGENT: 12,
 
     // value
-    // there are no subtypes for value because it's impossible to determine until runtime if a value is a valid variable until runtime
+    LITERAL: 13,
+    VARIABLE: 14,
 
     // paren
-    L_PAREN: 13,
-    R_PAREN: 14
+    L_PAREN: 15,
+    R_PAREN: 16
 }
 
 // Higher precedence = evaluated first
