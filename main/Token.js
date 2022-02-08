@@ -50,5 +50,6 @@ class Token {
         this.type = type;
         this.subType = subType;
         this.value = value;
+        this.extraPrecedence = 0;
     }
 }

@@ -111,11 +111,63 @@ class Evaluator {
 
     buildSyntaxTree(tokens, iterations = 0) {
         if (tokens.length == 1) return new ValueNode(tokens[0].value);
-        var index = this.findLowestPrecedenceOperator(tokens);
-        var left = tokens.slice(0, index);
-        var right = tokens.slice(index + 1);
-        if (iterations > 1000) return;
-        return new BinaryOperatorNode(this.buildSyntaxTree(left, iterations + 1), this.buildSyntaxTree(right, iterations + 1), tokens[index].subType);
+        if (iterations > 10) return;
+
+        // If there are brackets, eliminate the brackets.
+        // So to get around brackets existing, what we do is apply extra precedence to the operators inside brackets,
+        // proportional to the depth of the brackets.
+        // Then we can remove the brackets and nobody will even notice
+        if (this.containsBrackets(tokens)) {
+            // Get start/end of most bracketed section
+            var [startIdx, endIdx, nestingLevel] = this.getNestingInfo(tokens);
+            var bracketedTokens = tokens.slice(startIdx + 1, endIdx - 1);
+            var tokenSubTypeAmount = wrk.obj.keys(TokenSubType).length;
+            for (var token of bracketedTokens) {
+                token.extraPrecedence = nestingLevel * tokenSubTypeAmount;
+            }
+            var left = tokens.slice(0, startIdx);
+            var right = tokens.slice(endIdx);
+            return this.buildSyntaxTree(left.concat(bracketedTokens).concat(right), iterations + 1);
+        }
+        // Find lowest precedence operator, extract it into a node, repeat for lhs and rhs
+        else {
+            var index = this.findLowestPrecedenceOperator(tokens);
+            var left = tokens.slice(0, index);
+            var right = tokens.slice(index + 1);
+            return new BinaryOperatorNode(this.buildSyntaxTree(left, iterations + 1), this.buildSyntaxTree(right, iterations + 1), tokens[index].subType);
+        }
+    }
+
+    containsBrackets(tokens) {
+        for (var token of tokens) {
+            if ([TokenSubType.L_PAREN, TokenSubType.R_PAREN].includes(token.subType)) return true;
+        }
+        return false;
+    }
+
+    getNestingInfo(tokens) {
+        var crntNestingLevel = 0;
+        var highestNestingLevel = 0;
+        var highestNestStart = -1;
+        var highestNestEnd = -1;
+        var index = 0;
+        for (var token of tokens) {
+            if (token.subType == TokenSubType.L_PAREN) {
+                crntNestingLevel++;
+                if (crntNestingLevel >= highestNestingLevel) {
+                    highestNestingLevel = crntNestingLevel;
+                    highestNestStart = index;
+                }
+            }
+            if (token.subType == TokenSubType.R_PAREN) {
+                if (crntNestingLevel == highestNestingLevel) {
+                    highestNestEnd = index + 1;
+                }
+                crntNestingLevel--;
+            }
+            index++;
+        }
+        return [highestNestStart, highestNestEnd, highestNestingLevel];
     }
 
     findLowestPrecedenceOperator(tokens) {
@@ -124,8 +176,8 @@ class Evaluator {
         var index = 0;
         for (var token of tokens) {
             if (token.subType in OperatorPrecedence) {
-                if (OperatorPrecedence[token.subType] < lowestPrecedence) {
-                    lowestPrecedence = OperatorPrecedence[token.subType];
+                if (OperatorPrecedence[token.subType] + token.extraPrecedence < lowestPrecedence) {
+                    lowestPrecedence = OperatorPrecedence[token.subType] + token.extraPrecedence;
                     lowestPrecedenceIndex = index;
                 }
             }
