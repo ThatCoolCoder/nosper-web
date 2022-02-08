@@ -54,7 +54,7 @@ class Tokeniser {
                 tokens.push(new Token(TokenType.PAREN, this.StringToTokenSubType[this.crntChar], this.crntChar));
                 this.next()
             }
-            else if (wrk.str.digits.includes(this.crntChar)) {
+            else if (spnr.str.digits.includes(this.crntChar)) {
                 // If it's a digit, continue reading a number until we reach the end
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.OTHER, Number(this.readNumber())));
             }
@@ -69,7 +69,7 @@ class Tokeniser {
                 var value = 10 ** Number(this.readNumber());
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.OTHER, value));
             }
-            else if (wrk.str.lowerAlphabet.includes(this.crntChar.toLowerCase())) {
+            else if (spnr.str.lowerAlphabet.includes(this.crntChar.toLowerCase())) {
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.OTHER, this.crntChar));
                 this.next();
             }
@@ -94,7 +94,7 @@ class Tokeniser {
     readNumber() {
         var numberVal = '';
         var periodCount = 0;
-        while ((wrk.str.digits.includes(this.crntChar) || this.crntChar == '.') && periodCount < 2) {
+        while ((spnr.str.digits.includes(this.crntChar) || this.crntChar == '.') && periodCount < 2) {
             numberVal += this.crntChar;
             this.next();
         }

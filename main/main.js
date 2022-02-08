@@ -1,4 +1,4 @@
-const mainInput = wrk.dom.id('mainInput');
+const mainInput = spnr.dom.id('mainInput');
 
 const evaluator = new Evaluator();
 

@@ -32,7 +32,7 @@ class Evaluator {
             // Get start/end of most bracketed section
             var [startIdx, endIdx, nestingLevel] = this.getNestingInfo(tokens);
             var bracketedTokens = tokens.slice(startIdx + 1, endIdx - 1);
-            var precedenceIncrement = wrk.obj.keys(OperatorPrecedence).length;
+            var precedenceIncrement = spnr.obj.keys(OperatorPrecedence).length;
             for (var token of bracketedTokens) {
                 token.extraPrecedence = nestingLevel * precedenceIncrement;
             }

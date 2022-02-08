@@ -3,7 +3,7 @@
 }
 
 body {
-    background-image: url('logoLarge.png');
+    background-image: url('../assets/logoLarge.png');
     background-size: 100vh 100vh;
 }
 
