@@ -4,7 +4,10 @@ const BinaryOperator = {
     [TokenSubType.MULTIPLY]: (a, b) => a * b,
     [TokenSubType.DIVIDE]: (a, b) => a / b,
     [TokenSubType.EXPONENTIATE]: (a, b) => a ** b,
-    [TokenSubType.ASSIGN]: (a, b, evaluationContext) => evaluationContext.setVariable(a, b)
+    [TokenSubType.ASSIGN]: (a, b, evaluationContext) => {
+        evaluationContext.setVariable(a, b);
+        return b;
+    }
 }
 
 const UnaryOperator = {
@@ -29,7 +32,7 @@ class ValueNode extends SyntaxTreeNode {
     evaluate(evaluationContext) {
         if (typeof (this.value) == 'number') return this.value;
         else if (evaluationContext.variableIsDefined(this.value)) return evaluationContext.getVariable(this.value);
-        else throw Error("ValueNode.value was not a variable or a number");
+        // else throw Error("ValueNode.value was not a variable or a number");
     }
 }
 
@@ -42,7 +45,8 @@ class BinaryOperatorNode extends SyntaxTreeNode {
     }
 
     evaluate(evaluationContext) {
-        return BinaryOperator[this.operator](this.left.evaluate(evaluationContext), this.right.evaluate(evaluationContext));
+        console.log(evaluationContext);
+        return BinaryOperator[this.operator](this.left.evaluate(evaluationContext), this.right.evaluate(evaluationContext), evaluationContext);
     }
 }
 
@@ -53,9 +57,8 @@ class UnaryOperatorNode extends SyntaxTreeNode {
         this.operator = operator;
     }
 
-
     evaluate(evaluationContext) {
-        return UnaryOperator[this.operator](this.left.evaluate(evaluationContext));
+        return UnaryOperator[this.operator](this.left.evaluate(evaluationContext), evaluationContext);
     }
 }
 
