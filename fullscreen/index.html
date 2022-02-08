@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Nalton Calculator</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="../common/images/icon16.png" />
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    <h1>Nalton Calculator</h1>
+    <p>Simple, open source and powerful</p>
+    <input id="mainInput" placeholder="Enter expression"><button onclick="calculate()">Evaluate</button>
+    <br />
+    <span id="errorOutput"></span>
+</body>
+
+<script src="../common/spnr.js"></script>
+<script src="../common/mathEngine/Token.js"></script>
+<script src="../common/mathEngine/EvaluationContext.js"></script>
+<script src="../common/mathEngine/SyntaxTreeNodes.js"></script>
+<script src="../common/mathEngine/Tokeniser.js"></script>
+<script src="../common/mathEngine/Evaluator.js"></script>
+<script src="script.js"></script>
+
+</html>
