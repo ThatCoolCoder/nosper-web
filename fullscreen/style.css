@@ -1,8 +1,7 @@
 * {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
-
-p, input, span, label, button {
+p, input, span, label, button, li {
     font-size: 20px;
 }
 

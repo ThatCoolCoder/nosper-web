@@ -16,7 +16,7 @@ const TokenSubType = {
     EXPONENTIATE: 4,
     ASSIGN: 5,
 
-    // unary operator
+    // unary operator: trig
     NEGATE: 6,
     SINE: 7,
     ARC_SINE: 8,
@@ -24,14 +24,17 @@ const TokenSubType = {
     ARC_COSINE: 10,
     TANGENT: 11,
     ARC_TANGENT: 12,
+    // unary operator: not trig
+    SQUARE_ROOT: 13,
+    CUBE_ROOT: 14,
 
     // value
-    LITERAL: 13,
-    VARIABLE: 14,
+    LITERAL: 15,
+    VARIABLE: 16,
 
     // paren
-    L_PAREN: 15,
-    R_PAREN: 16
+    L_PAREN: 17,
+    R_PAREN: 18
 }
 
 // Higher precedence = evaluated first
@@ -48,7 +51,9 @@ const OperatorPrecedence = {
     [TokenSubType.COSINE]: 4,
     [TokenSubType.ARC_COSINE]: 4,
     [TokenSubType.TANGENT]: 4,
-    [TokenSubType.ARC_TANGENT]: 4
+    [TokenSubType.ARC_TANGENT]: 4,
+    [TokenSubType.SQUARE_ROOT]: 4,
+    [TokenSubType.CUBE_ROOT]: 4
 
 }
 

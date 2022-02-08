@@ -12,7 +12,7 @@ class Tokeniser {
         '^': TokenSubType.EXPONENTIATE,
         '=': TokenSubType.ASSIGN,
 
-        // Unary operator
+        // Unary operator: trigonometry
         'sin': TokenSubType.SINE,
         'asin': TokenSubType.ARC_SINE,
         'cos': TokenSubType.COSINE,
@@ -20,8 +20,14 @@ class Tokeniser {
         'tan': TokenSubType.TANGENT,
         'atan': TokenSubType.ARC_TANGENT,
 
+        // Unary operator: not trigonometry
+        'sqrt': TokenSubType.SQUARE_ROOT,
+        'q': TokenSubType.SQUARE_ROOT,
+        'cbrt': TokenSubType.CUBE_ROOT,
+        'c': TokenSubType.CUBE_ROOT,
+
         // Value
-        // <none?
+        // <none>
 
         // Paren
         '(': TokenSubType.L_PAREN,
@@ -58,8 +64,8 @@ class Tokeniser {
                 // If it's a digit, continue reading a number until we reach the end
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, Number(this.readNumber())));
             }
-            else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan']) != null) {
-                var text = this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan']);
+            else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'sqrt', 'q', 'cbrt', 'c']) != null) {
+                var text = this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'sqrt', 'q', 'cbrt', 'c']);
                 tokens.push(new Token(TokenType.UNARY_OPERATOR, this.StringToTokenSubType[text], text));
                 this.next(text.length);
             }

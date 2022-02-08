@@ -11,6 +11,7 @@ const BinaryOperator = {
 }
 
 const UnaryOperator = {
+    // Trig:
     [TokenSubType.NEGATE]: a => -a,
     [TokenSubType.SINE]: a => Math.sin(a),
     [TokenSubType.ARC_SINE]: a => Math.asin(a),
@@ -18,6 +19,10 @@ const UnaryOperator = {
     [TokenSubType.ARC_COSINE]: a => Math.acos(a),
     [TokenSubType.TANGENT]: a => Math.tan(a),
     [TokenSubType.ARC_TANGENT]: a => Math.atan(a),
+
+    // Not trig
+    [TokenSubType.SQUARE_ROOT]: a => Math.sqrt(a),
+    [TokenSubType.CUBE_ROOT]: a => Math.cbrt(a),
 }
 
 class SyntaxTreeNode {

@@ -28,3 +28,11 @@ mainInput.addEventListener('keydown', event => {
         calculate();
     }
 })
+
+
+function openHelp() {
+    var newURL = chrome.runtime.getURL('documentation/index.html');
+    chrome.tabs.create({ url: newURL });
+}
+
+spnr.dom.id('helpButton').addEventListener('click', openHelp);
