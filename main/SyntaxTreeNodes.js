@@ -13,8 +13,11 @@ const BinaryOperator = {
 const UnaryOperator = {
     [TokenSubType.NEGATE]: a => -a,
     [TokenSubType.SINE]: a => Math.sin(a),
+    [TokenSubType.ARC_SINE]: a => Math.asin(a),
     [TokenSubType.COSINE]: a => Math.cos(a),
+    [TokenSubType.ARC_COSINE]: a => Math.acos(a),
     [TokenSubType.TANGENT]: a => Math.tan(a),
+    [TokenSubType.ARC_TANGENT]: a => Math.atan(a),
 }
 
 class SyntaxTreeNode {
@@ -45,20 +48,19 @@ class BinaryOperatorNode extends SyntaxTreeNode {
     }
 
     evaluate(evaluationContext) {
-        console.log(evaluationContext);
         return BinaryOperator[this.operator](this.left.evaluate(evaluationContext), this.right.evaluate(evaluationContext), evaluationContext);
     }
 }
 
 class UnaryOperatorNode extends SyntaxTreeNode {
-    constructor(left, operator) {
+    constructor(right, operator) {
         super();
-        this.left = left;
+        this.right = right;
         this.operator = operator;
     }
 
     evaluate(evaluationContext) {
-        return UnaryOperator[this.operator](this.left.evaluate(evaluationContext), evaluationContext);
+        return UnaryOperator[this.operator](this.right.evaluate(evaluationContext), evaluationContext);
     }
 }
 

@@ -19,29 +19,35 @@ const TokenSubType = {
     // unary operator
     NEGATE: 6,
     SINE: 7,
-    COSINE: 8,
-    TANGENT: 9,
+    ARC_SINE: 8,
+    COSINE: 9,
+    ARC_COSINE: 10,
+    TANGENT: 11,
+    ARC_TANGENT: 12,
 
     // value
     // there are no subtypes for value because it's impossible to determine until runtime if a value is a valid variable until runtime
 
     // paren
-    L_PAREN: 12,
-    R_PAREN: 13
+    L_PAREN: 13,
+    R_PAREN: 14
 }
 
 // Higher precedence = evaluated first
 const OperatorPrecedence = {
-    [TokenSubType.ASSIGN]: -1,
-    [TokenSubType.ADD]: 0,
-    [TokenSubType.SUBTRACT]: 0,
-    [TokenSubType.MULTIPLY]: 1,
-    [TokenSubType.DIVIDE]: 1,
-    [TokenSubType.EXPONENTIATE]: 2,
+    [TokenSubType.ASSIGN]: 0,
+    [TokenSubType.ADD]: 1,
+    [TokenSubType.SUBTRACT]: 1,
+    [TokenSubType.MULTIPLY]: 2,
+    [TokenSubType.DIVIDE]: 2,
+    [TokenSubType.EXPONENTIATE]: 3,
 
-    [TokenSubType.SINE]: 3,
-    [TokenSubType.COSINE]: 3,
-    [TokenSubType.TANGENT]: 3
+    [TokenSubType.SINE]: 4,
+    [TokenSubType.ARC_SINE]: 4,
+    [TokenSubType.COSINE]: 4,
+    [TokenSubType.ARC_COSINE]: 4,
+    [TokenSubType.TANGENT]: 4,
+    [TokenSubType.ARC_TANGENT]: 4
 
 }
 
