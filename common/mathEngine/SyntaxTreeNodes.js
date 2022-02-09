@@ -5,8 +5,7 @@ const BinaryOperator = {
     [TokenSubType.DIVIDE]: (a, b) => a / b,
     [TokenSubType.EXPONENTIATE]: (a, b) => a ** b,
     [TokenSubType.ASSIGN]: (a, b, ctx) => {
-        ctx.setVariable(a, b);
-        return b;
+        void(0); // assigning needs special access so we put it in a bodge in binary operator
     }
 }
 
@@ -59,7 +58,14 @@ class BinaryOperatorNode extends SyntaxTreeNode {
     }
 
     evaluate(evaluationContext) {
-        return BinaryOperator[this.operator](this.left.evaluate(evaluationContext), this.right.evaluate(evaluationContext), evaluationContext);
+        // Hack to make assignment work because we need name of variable not content.
+        if (this.operator == TokenSubType.ASSIGN) {
+            var rightValue = this.right.evaluate(evaluationContext);
+            evaluationContext.setVariable(this.left.value, rightValue);
+            return rightValue;
+        }
+        else return BinaryOperator[this.operator](this.left.evaluate(evaluationContext),
+                this.right.evaluate(evaluationContext), evaluationContext);
     }
 }
 
