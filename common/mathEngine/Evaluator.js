@@ -9,7 +9,7 @@ class Evaluator {
     }
 
     constructor() {
-        this.evaulationContext = new EvaluationContext();
+        this.evaluationContext = new EvaluationContext();
         this.tokeniser = new Tokeniser();
     }
 
@@ -18,7 +18,7 @@ class Evaluator {
         console.log(tokens);
         var syntaxTree = this.buildSyntaxTree(tokens);
         console.log(syntaxTree);
-        return syntaxTree.evaluate(this.evaulationContext);
+        return syntaxTree.evaluate(this.evaluationContext);
     }
 
 

@@ -1,11 +1,13 @@
 const mainInput = spnr.dom.id('mainInput');
 const errorOutput = spnr.dom.id('errorOutput');
+const degreesCheckbox = spnr.dom.id('degreesCheckbox');
 
 const evaluator = new Evaluator();
 
 function calculate() {
     var expression = mainInput.value;
     if (expression == '') return;
+    evaluator.evaluationContext.useRadians = ! degreesCheckbox.checked;
     var error = '';
     try {
         var result = evaluator.evaluate(expression);
@@ -29,10 +31,10 @@ mainInput.addEventListener('keydown', event => {
     }
 })
 
-
 function openHelp() {
     var newURL = chrome.runtime.getURL('documentation/index.html');
     chrome.tabs.create({ url: newURL });
 }
 
 spnr.dom.id('helpButton').addEventListener('click', openHelp);
+spnr.dom.id('evaluateButton')?.addEventListener('click', calculate);

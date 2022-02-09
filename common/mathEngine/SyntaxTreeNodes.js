@@ -4,8 +4,8 @@ const BinaryOperator = {
     [TokenSubType.MULTIPLY]: (a, b) => a * b,
     [TokenSubType.DIVIDE]: (a, b) => a / b,
     [TokenSubType.EXPONENTIATE]: (a, b) => a ** b,
-    [TokenSubType.ASSIGN]: (a, b, evaluationContext) => {
-        evaluationContext.setVariable(a, b);
+    [TokenSubType.ASSIGN]: (a, b, ctx) => {
+        ctx.setVariable(a, b);
         return b;
     }
 }
@@ -13,16 +13,22 @@ const BinaryOperator = {
 const UnaryOperator = {
     // Trig:
     [TokenSubType.NEGATE]: a => -a,
-    [TokenSubType.SINE]: a => Math.sin(a),
-    [TokenSubType.ARC_SINE]: a => Math.asin(a),
-    [TokenSubType.COSINE]: a => Math.cos(a),
-    [TokenSubType.ARC_COSINE]: a => Math.acos(a),
-    [TokenSubType.TANGENT]: a => Math.tan(a),
-    [TokenSubType.ARC_TANGENT]: a => Math.atan(a),
+    [TokenSubType.SINE]: (a, ctx) => Math.sin(convertToRadians(a, ctx.useRadians)),
+    [TokenSubType.ARC_SINE]: (a, ctx) => Math.asin(convertToRadians(a, ctx.useRadians)),
+    [TokenSubType.COSINE]: (a, ctx) => Math.cos(convertToRadians(a, ctx.useRadians)),
+    [TokenSubType.ARC_COSINE]: (a, ctx) => Math.acos(convertToRadians(a, ctx.useRadians)),
+    [TokenSubType.TANGENT]: (a, ctx) => Math.tan(convertToRadians(a, ctx.useRadians)),
+    [TokenSubType.ARC_TANGENT]: (a, ctx) => Math.atan(convertToRadians(a, ctx.useRadians)),
 
     // Not trig
     [TokenSubType.SQUARE_ROOT]: a => Math.sqrt(a),
     [TokenSubType.CUBE_ROOT]: a => Math.cbrt(a),
+}
+
+function convertToRadians(angle, isRadians) {
+    // convert an angle to radians, regardless of whether it's radians or degrees
+    if (isRadians) return angle;
+    else return spnr.radians(angle)
 }
 
 class SyntaxTreeNode {

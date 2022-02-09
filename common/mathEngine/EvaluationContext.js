@@ -1,6 +1,7 @@
 class EvaluationContext {
     constructor() {
         this.variables = {};
+        this.useRadians = true;
     }
 
     variableIsDefined(variableName) {

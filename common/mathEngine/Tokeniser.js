@@ -77,7 +77,6 @@ class Tokeniser {
             }
             else if (spnr.str.lowerAlphabet.includes(this.crntChar.toLowerCase())) {
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.VARIABLE, this.readString()));
-                this.next();
             }
             else {
                 this.next();
