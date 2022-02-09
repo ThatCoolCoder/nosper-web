@@ -10,7 +10,9 @@ class Tokeniser {
         '/': TokenSubType.DIVIDE,
         '**': TokenSubType.EXPONENTIATE,
         '^': TokenSubType.EXPONENTIATE,
+        // Binary operator: assign
         '=': TokenSubType.ASSIGN,
+        '=>': TokenSubType.FUNCTION_ASSIGN,
 
         // Unary operator: trigonometry
         'sin': TokenSubType.SINE,
@@ -41,9 +43,11 @@ class Tokeniser {
         var tokens = [];
 
         while (this.charIdx < expression.length) {
-            if (['+', '-', '/', '^', '='].includes(this.crntChar)) {
-                tokens.push(new Token(TokenType.BINARY_OPERATOR, this.StringToTokenSubType[this.crntChar], this.crntChar));
-                this.next()
+            if (this.nextCharsEqualToAny(['+', '-', '/', '^', '=>', '=']) != null) {
+                var text = this.nextCharsEqualToAny(['+', '-', '/', '^', '=>', '=']);
+                tokens.push(new Token(TokenType.BINARY_OPERATOR,
+                    this.StringToTokenSubType[text], text));
+                this.next(text.length);
             }
             else if (this.crntChar == '*') {
                 // If these two chars == '**', then it's power and not mult
@@ -53,21 +57,25 @@ class Tokeniser {
                 }
                 else {
                     tokens.push(new Token(TokenType.BINARY_OPERATOR, TokenSubType.MULTIPLY, '*'));
-                    this.next()
+                    this.next();
                 }
             }
             else if (['(', ')'].includes(this.crntChar)) {
                 tokens.push(new Token(TokenType.PAREN, this.StringToTokenSubType[this.crntChar], this.crntChar));
-                this.next()
+                this.next();
             }
             else if (spnr.str.digits.includes(this.crntChar)) {
-                // If it's a digit, continue reading a number until we reach the end
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, Number(this.readNumber())));
             }
             else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'sqrt', 'q', 'cbrt', 'c']) != null) {
                 var text = this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'sqrt', 'q', 'cbrt', 'c']);
                 tokens.push(new Token(TokenType.UNARY_OPERATOR, this.StringToTokenSubType[text], text));
                 this.next(text.length);
+            }
+            else if (this.crntChar == '$') {
+                this.next();
+                var functionName = this.readString();
+                tokens.push(new Token(TokenType.FUNCTION_CALL, TokenSubType.OTHER, functionName));
             }
             else if (this.crntChar.toLowerCase() == 'e') {
                 // Try to read number like 6 * e10 (minus the 6 bit)

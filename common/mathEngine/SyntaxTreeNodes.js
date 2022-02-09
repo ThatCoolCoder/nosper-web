@@ -1,27 +1,33 @@
 const BinaryOperator = {
-    [TokenSubType.ADD]: (a, b) => a + b,
-    [TokenSubType.SUBTRACT]: (a, b) => a - b,
-    [TokenSubType.MULTIPLY]: (a, b) => a * b,
-    [TokenSubType.DIVIDE]: (a, b) => a / b,
-    [TokenSubType.EXPONENTIATE]: (a, b) => a ** b,
+    [TokenSubType.ADD]: (a, b, ctx) => a.evaluate(ctx) + b.evaluate(ctx),
+    [TokenSubType.SUBTRACT]: (a, b, ctx) => a.evaluate(ctx) - b.evaluate(ctx),
+    [TokenSubType.MULTIPLY]: (a, b, ctx) => a.evaluate(ctx) * b.evaluate(ctx),
+    [TokenSubType.DIVIDE]: (a, b, ctx) => a.evaluate(ctx) / b.evaluate(ctx),
+    [TokenSubType.EXPONENTIATE]: (a, b, ctx) => a.evaluate(ctx) ** b.evaluate(ctx),
     [TokenSubType.ASSIGN]: (a, b, ctx) => {
-        void(0); // assigning needs special access so we put it in a bodge in binary operator
+        var bValue = b.evaluate(ctx);
+        ctx.setVariable(a.value, bValue);
+        return bValue;
+    },
+    [TokenSubType.FUNCTION_ASSIGN]: (a, b, ctx) => {
+        ctx.setFunction('hello', b);
+        return 0;
     }
 }
 
 const UnaryOperator = {
     // Trig:
     [TokenSubType.NEGATE]: a => -a,
-    [TokenSubType.SINE]: (a, ctx) => Math.sin(convertToRadians(a, ctx.useRadians)),
-    [TokenSubType.ARC_SINE]: (a, ctx) => Math.asin(convertToRadians(a, ctx.useRadians)),
-    [TokenSubType.COSINE]: (a, ctx) => Math.cos(convertToRadians(a, ctx.useRadians)),
-    [TokenSubType.ARC_COSINE]: (a, ctx) => Math.acos(convertToRadians(a, ctx.useRadians)),
-    [TokenSubType.TANGENT]: (a, ctx) => Math.tan(convertToRadians(a, ctx.useRadians)),
-    [TokenSubType.ARC_TANGENT]: (a, ctx) => Math.atan(convertToRadians(a, ctx.useRadians)),
+    [TokenSubType.SINE]: (a, ctx) => Math.sin(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
+    [TokenSubType.ARC_SINE]: (a, ctx) => Math.asin(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
+    [TokenSubType.COSINE]: (a, ctx) => Math.cos(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
+    [TokenSubType.ARC_COSINE]: (a, ctx) => Math.acos(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
+    [TokenSubType.TANGENT]: (a, ctx) => Math.tan(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
+    [TokenSubType.ARC_TANGENT]: (a, ctx) => Math.atan(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
 
     // Not trig
-    [TokenSubType.SQUARE_ROOT]: a => Math.sqrt(a),
-    [TokenSubType.CUBE_ROOT]: a => Math.cbrt(a),
+    [TokenSubType.SQUARE_ROOT]: a => Math.sqrt(a.evaluate(ctx)),
+    [TokenSubType.CUBE_ROOT]: a => Math.cbrt(a.evaluate(ctx)),
 }
 
 function convertToRadians(angle, isRadians) {
@@ -58,14 +64,7 @@ class BinaryOperatorNode extends SyntaxTreeNode {
     }
 
     evaluate(evaluationContext) {
-        // Hack to make assignment work because we need name of variable not content.
-        if (this.operator == TokenSubType.ASSIGN) {
-            var rightValue = this.right.evaluate(evaluationContext);
-            evaluationContext.setVariable(this.left.value, rightValue);
-            return rightValue;
-        }
-        else return BinaryOperator[this.operator](this.left.evaluate(evaluationContext),
-                this.right.evaluate(evaluationContext), evaluationContext);
+        return BinaryOperator[this.operator](this.left, this.right, evaluationContext);
     }
 }
 
@@ -77,11 +76,17 @@ class UnaryOperatorNode extends SyntaxTreeNode {
     }
 
     evaluate(evaluationContext) {
-        return UnaryOperator[this.operator](this.right.evaluate(evaluationContext), evaluationContext);
+        return UnaryOperator[this.operator](this.right, evaluationContext);
     }
 }
 
-// can have operator
-//  - as part of logic in base node
-//  - in supernodes
-//  - in external table of functions
+class FunctionCallNode extends SyntaxTreeNode {
+    constructor(name) {
+        super();
+        this.name = name;
+    }
+
+    evaluate(evaluationContext) {
+        return evaluationContext.getFunction(this.name).evaluate(evaluationContext);
+    }
+}

@@ -3,6 +3,7 @@ const TokenType = {
     UNARY_OPERATOR: 1,
     VALUE: 2,
     PAREN: 3,
+    FUNCTION_CALL: 4
 }
 
 const TokenSubType = {
@@ -15,31 +16,33 @@ const TokenSubType = {
     DIVIDE: 3,
     EXPONENTIATE: 4,
     ASSIGN: 5,
+    FUNCTION_ASSIGN: 6,
 
     // unary operator: trig
-    NEGATE: 6,
-    SINE: 7,
-    ARC_SINE: 8,
-    COSINE: 9,
-    ARC_COSINE: 10,
-    TANGENT: 11,
-    ARC_TANGENT: 12,
+    NEGATE: 7,
+    SINE: 8,
+    ARC_SINE: 9,
+    COSINE: 10,
+    ARC_COSINE: 11,
+    TANGENT: 12,
+    ARC_TANGENT: 13,
     // unary operator: not trig
-    SQUARE_ROOT: 13,
-    CUBE_ROOT: 14,
+    SQUARE_ROOT: 14,
+    CUBE_ROOT: 15,
 
     // value
-    LITERAL: 15,
-    VARIABLE: 16,
+    LITERAL: 16,
+    VARIABLE: 17,
 
     // paren
-    L_PAREN: 17,
-    R_PAREN: 18
+    L_PAREN: 18,
+    R_PAREN: 19
 }
 
 // Higher precedence = evaluated first
 const OperatorPrecedence = {
     [TokenSubType.ASSIGN]: 0,
+    [TokenSubType.FUNCTION_ASSIGN]: 0,
     [TokenSubType.ADD]: 1,
     [TokenSubType.SUBTRACT]: 1,
     [TokenSubType.MULTIPLY]: 2,
