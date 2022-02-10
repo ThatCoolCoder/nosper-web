@@ -3,11 +3,20 @@ const errorOutput = spnr.dom.id('errorOutput');
 const degreesCheckbox = spnr.dom.id('degreesCheckbox');
 
 const evaluator = new Evaluator();
+const inputHistory = new InputHistory();
+inputHistory.load(() => {
+    inputHistory.pastEnd()
+});
 
 function calculate() {
     var expression = mainInput.value;
     if (expression == '') return;
+    inputHistory.push(expression);
+    inputHistory.toEnd();
+    inputHistory.save();
+
     evaluator.context.useRadians = ! degreesCheckbox.checked;
+
     var error = '';
     try {
         var result = evaluator.evaluate(expression);
@@ -26,8 +35,20 @@ function calculate() {
 }
 
 mainInput.addEventListener('keydown', event => {
-    if (event.keyCode == 13) {
+    if (event.code == 'Enter') {
         calculate();
+    }
+    else if (event.code == 'ArrowUp') {
+        event.preventDefault();
+        inputHistory.previous();
+        mainInput.value = inputHistory.crntCommand;
+    }
+    else if (event.code == 'ArrowDown') {
+        event.preventDefault();
+        if (mainInput.value != '') {
+            inputHistory.next();
+            mainInput.value = inputHistory.crntCommand;
+        }
     }
 })
 
