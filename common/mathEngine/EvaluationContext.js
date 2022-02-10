@@ -1,6 +1,9 @@
 class EvaluationContext {
     constructor() {
-        this.variables = {};
+        this.variables = {
+            pi: spnr.PI,
+            e: spnr.E
+        };
         this.functions = {};
         this.useRadians = true;
     }

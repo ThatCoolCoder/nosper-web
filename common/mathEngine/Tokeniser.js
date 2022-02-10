@@ -1,6 +1,8 @@
 class Tokeniser {
     // Class to tokenise string
 
+    alphabet = spnr.str.lowerAlphabet.concat(spnr.str.upperAlphabet);
+
     // A purposefully incomplete table designed to make some lookups easier
     StringToTokenSubType = {
         // Binary operator
@@ -77,13 +79,13 @@ class Tokeniser {
                 var functionName = this.readString();
                 tokens.push(new Token(TokenType.FUNCTION_CALL, TokenSubType.OTHER, functionName));
             }
-            else if (this.crntChar.toLowerCase() == 'e') {
-                // Try to read number like 6 * e10 (minus the 6 bit)
+            else if (this.crntChar.toLowerCase() == 'e' && spnr.str.digits.includes(this.peekNext)) {
+                // Try to read number like  E6  (10^6)
                 this.next();
                 var value = 10 ** Number(this.readNumber());
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, value));
             }
-            else if (spnr.str.lowerAlphabet.includes(this.crntChar.toLowerCase())) {
+            else if (this.alphabet.includes(this.crntChar.toLowerCase())) {
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.VARIABLE, this.readString()));
             }
             else {
@@ -99,9 +101,17 @@ class Tokeniser {
         this.crntChar = this.expression[this.charIdx];
     }
 
+    peekNext(amount = 1) {
+        return this.expression[this.charIdx + amount];
+    }
+
     previous(amount = 1) {
         this.charIdx -= amount;
         this.crntChar = this.expression[this.charIdx];
+    }
+
+    peekPrevious(amount = 1) {
+        return this.expression[this.charIdx + amount];
     }
 
     readNumber() {
@@ -116,7 +126,7 @@ class Tokeniser {
 
     readString() {
         var stringVal = '';
-        while (spnr.str.lowerAlphabet.includes(this.crntChar)) {
+        while (this.alphabet.includes(this.crntChar)) {
             stringVal += this.crntChar;
             this.next();
         }
