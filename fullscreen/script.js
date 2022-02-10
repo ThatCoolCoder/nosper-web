@@ -7,7 +7,7 @@ const evaluator = new Evaluator();
 function calculate() {
     var expression = mainInput.value;
     if (expression == '') return;
-    evaluator.evaluationContext.useRadians = ! degreesCheckbox.checked;
+    evaluator.context.useRadians = ! degreesCheckbox.checked;
     var error = '';
     try {
         var result = evaluator.evaluate(expression);

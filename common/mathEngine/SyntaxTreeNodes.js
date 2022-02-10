@@ -6,11 +6,11 @@ const BinaryOperator = {
     [TokenSubType.EXPONENTIATE]: (a, b, ctx) => a.evaluate(ctx) ** b.evaluate(ctx),
     [TokenSubType.ASSIGN]: (a, b, ctx) => {
         var bValue = b.evaluate(ctx);
-        ctx.setVariable(a.value, bValue);
+        ctx.variables.set(a.value, bValue);
         return bValue;
     },
     [TokenSubType.FUNCTION_ASSIGN]: (a, b, ctx) => {
-        ctx.setFunction('hello', b);
+        ctx.functions.set(a.value, b);
         return 0;
     }
 }
@@ -26,8 +26,8 @@ const UnaryOperator = {
     [TokenSubType.ARC_TANGENT]: (a, ctx) => Math.atan(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
 
     // Not trig
-    [TokenSubType.SQUARE_ROOT]: a => Math.sqrt(a.evaluate(ctx)),
-    [TokenSubType.CUBE_ROOT]: a => Math.cbrt(a.evaluate(ctx)),
+    [TokenSubType.SQUARE_ROOT]: (a, ctx) => Math.sqrt(a.evaluate(ctx)),
+    [TokenSubType.CUBE_ROOT]: (a, ctx) => Math.cbrt(a.evaluate(ctx)),
 }
 
 function convertToRadians(angle, isRadians) {
@@ -37,7 +37,7 @@ function convertToRadians(angle, isRadians) {
 }
 
 class SyntaxTreeNode {
-    evaluate(_evaluationContext) {
+    evaluate(_context) {
         throw Error("SyntaxTreeNode.evalulate() was not overridden");
     }
 }
@@ -48,9 +48,9 @@ class ValueNode extends SyntaxTreeNode {
         this.value = value;
     }
 
-    evaluate(evaluationContext) {
+    evaluate(context) {
         if (typeof (this.value) == 'number') return this.value;
-        else if (evaluationContext.variableIsDefined(this.value)) return evaluationContext.getVariable(this.value);
+        else if (context.variables.isDefined(this.value)) return context.variables.get(this.value);
         else return this.value;
     }
 }
@@ -63,8 +63,8 @@ class BinaryOperatorNode extends SyntaxTreeNode {
         this.operator = operator;
     }
 
-    evaluate(evaluationContext) {
-        return BinaryOperator[this.operator](this.left, this.right, evaluationContext);
+    evaluate(context) {
+        return BinaryOperator[this.operator](this.left, this.right, context);
     }
 }
 
@@ -75,18 +75,25 @@ class UnaryOperatorNode extends SyntaxTreeNode {
         this.operator = operator;
     }
 
-    evaluate(evaluationContext) {
-        return UnaryOperator[this.operator](this.right, evaluationContext);
+    evaluate(context) {
+        return UnaryOperator[this.operator](this.right, context);
     }
 }
 
 class FunctionCallNode extends SyntaxTreeNode {
-    constructor(name) {
+    constructor(name, args) {
         super();
         this.name = name;
+        this.args = args;
     }
 
-    evaluate(evaluationContext) {
-        return evaluationContext.getFunction(this.name).evaluate(evaluationContext);
+    evaluate(context) {
+        context.argumentStack.push(this.args.map(arg => {
+            arg.evaluate(context);
+        }));
+        var result = context.functions.get(this.name).evaluate(context);
+        console.log(result);
+        context.argumentStack.pop();
+        return result;
     }
 }

@@ -66,6 +66,10 @@ class Tokeniser {
                 tokens.push(new Token(TokenType.PAREN, this.StringToTokenSubType[this.crntChar], this.crntChar));
                 this.next();
             }
+            else if (this.crntChar == ',') {
+                tokens.push(new Token(TokenType.SEPARATOR, TokenSubType.ARGUMENT_SEPARATOR, this.crntChar));
+                this.next();
+            }
             else if (spnr.str.digits.includes(this.crntChar)) {
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, Number(this.readNumber())));
             }
@@ -76,17 +80,18 @@ class Tokeniser {
             }
             else if (this.crntChar == '$') {
                 this.next();
+                tokens.push(new Token(TokenType.VALUE, TokenSubType.VARIABLE, this.readString()));
+            }
+            else if (this.crntChar == '&') {
+                this.next();
                 var functionName = this.readString();
                 tokens.push(new Token(TokenType.FUNCTION_CALL, TokenSubType.OTHER, functionName));
             }
-            else if (this.crntChar.toLowerCase() == 'e' && spnr.str.digits.includes(this.peekNext)) {
+            else if (this.crntChar.toLowerCase() == 'e' && spnr.str.digits.includes(this.peekNext())) {
                 // Try to read number like  E6  (10^6)
                 this.next();
                 var value = 10 ** Number(this.readNumber());
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, value));
-            }
-            else if (this.alphabet.includes(this.crntChar.toLowerCase())) {
-                tokens.push(new Token(TokenType.VALUE, TokenSubType.VARIABLE, this.readString()));
             }
             else {
                 this.next();

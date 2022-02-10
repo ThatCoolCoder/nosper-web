@@ -9,7 +9,7 @@ class Evaluator {
     }
 
     constructor() {
-        this.evaluationContext = new EvaluationContext();
+        this.context = new EvaluationContext();
         this.tokeniser = new Tokeniser();
     }
 
@@ -18,12 +18,16 @@ class Evaluator {
         console.log(tokens);
         var syntaxTree = this.buildSyntaxTree(tokens);
         console.log(syntaxTree);
-        return syntaxTree.evaluate(this.evaluationContext);
+        return syntaxTree.evaluate(this.context);
     }
 
 
     buildSyntaxTree(tokens) {
-        if (tokens.length == 1) return new ValueNode(tokens[0].value);
+        // If there is only 1 token left then 
+        if (tokens.length == 1) {
+            if (tokens[0].type == TokenType.VALUE) return new ValueNode(tokens[0].value);
+            else if (tokens[0].type == TokenType.FUNCTION_CALL) return new FunctionCallNode(tokens[0].value, []);
+        }
 
         // If there are brackets, eliminate the brackets.
         // So to get around brackets existing, what we do is apply extra precedence to the operators inside brackets,

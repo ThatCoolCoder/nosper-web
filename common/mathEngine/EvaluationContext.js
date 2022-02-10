@@ -1,34 +1,31 @@
 class EvaluationContext {
     constructor() {
-        this.variables = {
+        this.variables = new ValueGroup({
             pi: spnr.PI,
             e: spnr.E
-        };
-        this.functions = {};
+        });
+        this.functions = new ValueGroup();
         this.useRadians = true;
+        this.argumentStack = [];
+    }
+}
+
+class ValueGroup {
+    // Abstraction of a dictionary for storing (potentially scoped) information such as functions and variables
+
+    constructor(initialData={}) {
+        this.data = initialData;
     }
 
-    variableIsDefined(variableName) {
-        return this.variables[variableName] != undefined;
+    isDefined(valueName) {
+        return this.data[valueName] != undefined;
     }
 
-    getVariable(variableName) {
-        return this.variables[variableName];
+    get(valueName) {
+        return this.data[valueName];
     }
 
-    setVariable(variableName, value) {
-        this.variables[variableName] = value;
-    }
-    
-    functionIsDefined(functionName) {
-        return this.functions[functionName] != undefined;
-    }
-
-    getFunction(functionName) {
-        return this.functions[functionName];
-    }
-
-    setFunction(functionName, value) {
-        this.functions[functionName] = value;
+    set(valueName, value) {
+        this.data[valueName] = value;
     }
 }

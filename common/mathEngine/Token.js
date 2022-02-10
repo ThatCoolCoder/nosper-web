@@ -3,7 +3,8 @@ const TokenType = {
     UNARY_OPERATOR: 1,
     VALUE: 2,
     PAREN: 3,
-    FUNCTION_CALL: 4
+    FUNCTION_CALL: 4,
+    SEPARATOR: 5
 }
 
 const TokenSubType = {
@@ -36,7 +37,12 @@ const TokenSubType = {
 
     // paren
     L_PAREN: 18,
-    R_PAREN: 19
+    R_PAREN: 19,
+
+    // (function call has no subtypes)
+
+    // separator
+    ARGUMENT_SEPARATOR: 20
 }
 
 // Higher precedence = evaluated first
