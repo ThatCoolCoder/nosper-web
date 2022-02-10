@@ -20,16 +20,16 @@
         <li>(2 + 3) * 4</li>
         <li>sin 1</li>
         <li>sin (1 + 2)</li>
-        <li>myvalue = sin (1 + 2)</li>
-        <li>sqrt myvalue</li>
-        <li>a = b = 5 &emsp; (sets both a and b to 5)</li>
+        <li>$myvalue = sin (1 + 2)</li>
+        <li>sqrt $myvalue</li>
+        <li>$a = $b = 5 &emsp; (sets both a and b to 5)</li>
     </ul>
 
     <p>Whitespace is largely optional and some functions have abbreviations! The following expressions are still valid:</p>
     <ul>
         <li>2+3*4</li>
         <li>sin15</li>
-        <li>roottwo=q2</li>
+        <li>$roottwo=q2</li>
     </ul>
 
     <h2>Specifics:</h2>
@@ -42,7 +42,7 @@
         <li>Division: 2 / 3 </li>
         <li>Exponentiation: 2 ** 3 or 2 ^ 3 </li>
     </ul>
-    <p>Functions</p>
+    <p>Inbuilt functions:</p>
 
     <ul>
         <li>
@@ -65,10 +65,17 @@
         </li>
     </ul>
 
-    <p>Variables/memory</p>
+    <p>Variables/memory:</p>
     <ul>
-        <li>Set variable: x = 5 </li>
-        <li>Use variable: x * 2 </li>
+        <li>Set variable: $x = 5 </li>
+        <li>Use variable: $x * 2 </li>
+    </ul>
+
+    <p>Custom functions:</p>
+    <ul>
+        <li>Define function: $cmToInches => $cm / 2.54</li>
+        <li>Run function: $inches = &cmToInches</li>
+        <li>Currently functions do not support arguments (they're a WIP), so if you want them to do anything useful you need to make them use the global variables (all variables are global).</li>
     </ul>
 </body>
 

@@ -84,8 +84,7 @@ class Tokeniser {
             }
             else if (this.crntChar == '&') {
                 this.next();
-                var functionName = this.readString();
-                tokens.push(new Token(TokenType.FUNCTION_CALL, TokenSubType.OTHER, functionName));
+                tokens.push(new Token(TokenType.FUNCTION_CALL, TokenSubType.OTHER, this.readString()));
             }
             else if (this.crntChar.toLowerCase() == 'e' && spnr.str.digits.includes(this.peekNext())) {
                 // Try to read number like  E6  (10^6)
