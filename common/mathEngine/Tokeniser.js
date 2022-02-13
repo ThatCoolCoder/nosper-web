@@ -1,3 +1,6 @@
+// Requires:
+// - Token.js
+
 class Tokeniser {
     // Class to tokenise string
 
@@ -10,6 +13,7 @@ class Tokeniser {
         '-': TokenSubType.SUBTRACT,
         '*': TokenSubType.MULTIPLY,
         '/': TokenSubType.DIVIDE,
+        '%': TokenSubType.MODULO,
         '**': TokenSubType.EXPONENTIATE,
         '^': TokenSubType.EXPONENTIATE,
         // Binary operator: assign
@@ -23,6 +27,11 @@ class Tokeniser {
         'acos': TokenSubType.ARC_COSINE,
         'tan': TokenSubType.TANGENT,
         'atan': TokenSubType.ARC_TANGENT,
+        'log': TokenSubType.LOGARITHM,
+        'ln': TokenSubType.NATURAL_LOGARITHM,
+        'round': TokenSubType.ROUND,
+        'floor': TokenSubType.FLOOR,
+        'ceil': TokenSubType.CEILING,
 
         // Unary operator: not trigonometry
         'sqrt': TokenSubType.SQUARE_ROOT,
@@ -45,14 +54,13 @@ class Tokeniser {
         var tokens = [];
 
         while (this.charIdx < expression.length) {
-            if (this.nextCharsEqualToAny(['+', '-', '/', '^', '=>', '=']) != null) {
-                var text = this.nextCharsEqualToAny(['+', '-', '/', '^', '=>', '=']);
+            if (this.nextCharsEqualToAny(['+', '-', '/', '%', '^', '=>', '=']) != null) {
+                var text = this.nextCharsEqualToAny(['+', '-', '/', '%', '^', '=>', '=']);
                 tokens.push(new Token(TokenType.BINARY_OPERATOR,
                     this.StringToTokenSubType[text], text));
                 this.next(text.length);
             }
             else if (this.crntChar == '*') {
-                // If these two chars == '**', then it's power and not mult
                 if (this.nextCharsEqualTo('**')) {
                     tokens.push(new Token(TokenType.BINARY_OPERATOR, TokenSubType.EXPONENTIATE, '**'));
                     this.next(2);
@@ -73,8 +81,8 @@ class Tokeniser {
             else if (spnr.str.digits.includes(this.crntChar)) {
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, Number(this.readNumber())));
             }
-            else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'sqrt', 'q', 'cbrt', 'c']) != null) {
-                var text = this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'sqrt', 'q', 'cbrt', 'c']);
+            else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'round', 'floor', 'ceil', 'sqrt', 'q', 'cbrt', 'c', 'abs', 'log', 'ln', ]) != null) {
+                var text = this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'round', 'floor', 'ceil', 'sqrt', 'q', 'cbrt', 'c', 'abs', 'log', 'ln']);
                 tokens.push(new Token(TokenType.UNARY_OPERATOR, this.StringToTokenSubType[text], text));
                 this.next(text.length);
             }

@@ -15,34 +15,41 @@ const TokenSubType = {
     SUBTRACT: 1,
     MULTIPLY: 2,
     DIVIDE: 3,
-    EXPONENTIATE: 4,
-    ASSIGN: 5,
-    FUNCTION_ASSIGN: 6,
+    MODULO: 4,
+    EXPONENTIATE: 5,
+    ASSIGN: 6,
+    FUNCTION_ASSIGN: 7,
 
     // unary operator: trig
-    NEGATE: 7,
-    SINE: 8,
-    ARC_SINE: 9,
-    COSINE: 10,
-    ARC_COSINE: 11,
-    TANGENT: 12,
-    ARC_TANGENT: 13,
+    NEGATE: 8,
+    SINE: 9,
+    ARC_SINE: 10,
+    COSINE: 11,
+    ARC_COSINE: 12,
+    TANGENT: 13,
+    ARC_TANGENT: 14,
     // unary operator: not trig
-    SQUARE_ROOT: 14,
-    CUBE_ROOT: 15,
+    SQUARE_ROOT: 15,
+    CUBE_ROOT: 16,
+    ABSOLUTE_VALUE: 17,
+    LOGARITHM: 18,
+    NATURAL_LOGARITHM: 19,
+    ROUND: 20,
+    FLOOR: 21,
+    CEILING: 22,
 
     // value
-    LITERAL: 16,
-    VARIABLE: 17,
+    LITERAL: 23,
+    VARIABLE: 24,
 
     // paren
-    L_PAREN: 18,
-    R_PAREN: 19,
+    L_PAREN: 25,
+    R_PAREN: 26,
 
     // (function call has no subtypes)
 
     // separator
-    ARGUMENT_SEPARATOR: 20
+    ARGUMENT_SEPARATOR: 24
 }
 
 // Higher precedence = evaluated first
@@ -53,6 +60,7 @@ const OperatorPrecedence = {
     [TokenSubType.SUBTRACT]: 1,
     [TokenSubType.MULTIPLY]: 2,
     [TokenSubType.DIVIDE]: 2,
+    [TokenSubType.MODULO]: 2,
     [TokenSubType.EXPONENTIATE]: 3,
 
     [TokenSubType.SINE]: 4,
@@ -62,7 +70,13 @@ const OperatorPrecedence = {
     [TokenSubType.TANGENT]: 4,
     [TokenSubType.ARC_TANGENT]: 4,
     [TokenSubType.SQUARE_ROOT]: 4,
-    [TokenSubType.CUBE_ROOT]: 4
+    [TokenSubType.CUBE_ROOT]: 4,
+    [TokenSubType.ABSOLUTE_VALUE]: 4,
+    [TokenSubType.LOGARITHM]: 4,
+    [TokenSubType.NATURAL_LOGARITHM]: 4,
+    [TokenSubType.ROUND]: 4,
+    [TokenSubType.FLOOR]: 4,
+    [TokenSubType.CEILING]: 4,
 
 }
 

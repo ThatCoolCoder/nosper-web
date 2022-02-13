@@ -1,3 +1,9 @@
+// Requires:
+// - EvaluationContext.js
+// - SyntaxTreeNodes.js
+// - Tokeniser.js
+// - Token.js
+
 class Evaluator {
     // Entry class. Create one and use it to evaluate math equations
 
@@ -15,6 +21,7 @@ class Evaluator {
 
     evaluate(expression) {
         var tokens = this.tokeniser.tokeniseExpression(expression);
+        console.log(tokens)
         var syntaxTree = this.buildSyntaxTree(tokens);
         return syntaxTree.evaluate(this.context);
     }

@@ -1,8 +1,12 @@
+// Requires:
+// - Token.js
+
 const BinaryOperator = {
     [TokenSubType.ADD]: (a, b, ctx) => a.evaluate(ctx) + b.evaluate(ctx),
     [TokenSubType.SUBTRACT]: (a, b, ctx) => a.evaluate(ctx) - b.evaluate(ctx),
     [TokenSubType.MULTIPLY]: (a, b, ctx) => a.evaluate(ctx) * b.evaluate(ctx),
     [TokenSubType.DIVIDE]: (a, b, ctx) => a.evaluate(ctx) / b.evaluate(ctx),
+    [TokenSubType.MODULO]: (a, b, ctx) => a.evaluate(ctx) % b.evaluate(ctx),
     [TokenSubType.EXPONENTIATE]: (a, b, ctx) => a.evaluate(ctx) ** b.evaluate(ctx),
     [TokenSubType.ASSIGN]: (a, b, ctx) => {
         var bValue = b.evaluate(ctx);
@@ -28,6 +32,12 @@ const UnaryOperator = {
     // Not trig
     [TokenSubType.SQUARE_ROOT]: (a, ctx) => Math.sqrt(a.evaluate(ctx)),
     [TokenSubType.CUBE_ROOT]: (a, ctx) => Math.cbrt(a.evaluate(ctx)),
+    [TokenSubType.ABSOLUTE_VALUE]: (a, ctx) => Math.abs(a.evaluate(ctx)),
+    [TokenSubType.LOGARITHM]: (a, ctx) => Math.log10(a.evaluate(ctx)),
+    [TokenSubType.NATURAL_LOGARITHM]: (a, ctx) => Math.log(a.evaluate(ctx)),
+    [TokenSubType.ROUND]: (a, ctx) => Math.round(a.evaluate(ctx)),
+    [TokenSubType.FLOOR]: (a, ctx) => Math.floor(a.evaluate(ctx)),
+    [TokenSubType.CEILING]: (a, ctx) => Math.ceil(a.evaluate(ctx)),
 }
 
 function convertToRadians(angle, isRadians) {
