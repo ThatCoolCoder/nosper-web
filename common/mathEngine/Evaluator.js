@@ -15,9 +15,7 @@ class Evaluator {
 
     evaluate(expression) {
         var tokens = this.tokeniser.tokeniseExpression(expression);
-        console.log(tokens);
         var syntaxTree = this.buildSyntaxTree(tokens);
-        console.log(syntaxTree);
         return syntaxTree.evaluate(this.context);
     }
 

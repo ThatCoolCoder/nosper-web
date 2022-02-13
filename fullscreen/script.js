@@ -1,4 +1,3 @@
-const mainInput = spnr.dom.id('mainInput');
 const errorOutput = spnr.dom.id('errorOutput');
 const degreesCheckbox = spnr.dom.id('degreesCheckbox');
 
@@ -7,9 +6,10 @@ const inputHistory = new InputHistory();
 inputHistory.load(() => {
     inputHistory.pastEnd()
 });
+const expressionInput = new ExpressionInput('mainInput', calculate, inputHistory);
 
 function calculate() {
-    var expression = mainInput.value;
+    var expression = expressionInput.value;
     if (expression == '') return;
     inputHistory.push(expression);
     inputHistory.toEnd();
@@ -33,24 +33,6 @@ function calculate() {
     }
     errorOutput.innerText = error;
 }
-
-mainInput.addEventListener('keydown', event => {
-    if (event.code == 'Enter') {
-        calculate();
-    }
-    else if (event.code == 'ArrowUp') {
-        event.preventDefault();
-        inputHistory.previous();
-        mainInput.value = inputHistory.crntCommand;
-    }
-    else if (event.code == 'ArrowDown') {
-        event.preventDefault();
-        if (mainInput.value != '') {
-            inputHistory.next();
-            mainInput.value = inputHistory.crntCommand;
-        }
-    }
-})
 
 function openHelp() {
     var newURL = chrome.runtime.getURL('documentation/index.html');

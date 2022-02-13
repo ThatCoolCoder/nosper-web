@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
-
     <head>
-        <title>Nalton Calculator</title>
+        <title>Graphing | Nalton Calculator</title>
         <link rel="stylesheet" href="../common/style.css" />
         <link rel="stylesheet" href="../common/fullscreen.css" />
         <link rel="stylesheet" href="style.css" />
         <link rel="icon" href="../common/images/icon16.png" />
         <meta charset="utf-8" />
     </head>
-
     <body>
-        <h1>Nalton Calculator</h1>
+        <h1>Nalton Calculator - Graphing Mode</h1>
         <p>Simple, open source and powerful</p>
         <input id="mainInput" placeholder="Enter expression and press enter">
         <button id="evaluateButton">Evaluate</button>
@@ -22,6 +20,10 @@
         <span id="errorOutput"></span>
         <br />
         <button id="helpButton">Help</button>
+        <br />
+        <br />
+
+        <canvas height="1000" width="2000" id="graph"></canvas>
     </body>
 
     <script src="../common/spnr.min.js"></script>
@@ -30,8 +32,8 @@
     <script src="../common/mathEngine/SyntaxTreeNodes.js"></script>
     <script src="../common/mathEngine/Tokeniser.js"></script>
     <script src="../common/mathEngine/Evaluator.js"></script>
-    <script src="../common/InputHistory.js"></script>
     <script src="../common/ExpressionInput.js"></script>
+    <script src="../common/InputHistory.js"></script>
+    <script src="LineGraph.js"></script>
     <script src="script.js"></script>
-
 </html>
