@@ -17,40 +17,40 @@
 
         <p>Example expressions:</p>
         <ul>
-            <li>1 + 2</li>
-            <li>2 + 3 * 4</li>
-            <li>(2 + 3) * 4</li>
-            <li>sin 1</li>
-            <li>sin (1 + 2)</li>
-            <li>$myvalue = sin (1 + 2)</li>
-            <li>sqrt $myvalue</li>
-            <li>$a = $b = 5 &emsp; (sets both a and b to 5)</li>
+            <li><code>1 + 2</code></li>
+            <li><code>2 + 3 * 4</code></li>
+            <li><code>(2 + 3) * 4</code></li>
+            <li><code>sin 1</code></li>
+            <li><code>sin (1 + 2)</code></li>
+            <li><code>$myvalue = sin (1 + 2)</code></li>
+            <li><code>sqrt $myvalue</code></li>
+            <li><code>$a = $b = 5</code> sets both a and b to 5</li>
         </ul>
 
         <p>Whitespace is largely optional and some functions have abbreviations! The following expressions are still valid:</p>
         <ul>
-            <li>2+3*4</li>
-            <li>sin15</li>
-            <li>$roottwo=q2</li>
+            <li><code>2+3*4</code></li>
+            <li><code>sin15</code></li>
+            <li><code>$roottwo=q2</code></li>
         </ul>
 
         <p>You can evaluate multiple expressions at once by separating them with semicolons:</p>
         <ul>
-            <li>3 * 3; 4 * 4 (evaluates to 16)</li>
-            <li>$x = 3; $x^2 (evaluates to 9)</li>
-            <li>$y = 42; &SomeFuncThatUsesY (evaluates to result of SomeFuncThatUsesY</li>
+            <li><code>3 * 3; 4 * 4</code> evaluates to 16</li>
+            <li><code>$x = 3; $x^2</code> evaluates to 9</li>
+            <li><code>$y = 42; &SomeFuncThatUsesY</code> evaluates to result of SomeFuncThatUsesY</li>
         </ul>
 
         <h2>Specifics:</h2>
 
         <p>Operators:</p>
         <ul>
-            <li>Addition: 2 + 3 </li>
-            <li>Subtraction: 2 - 3 </li>
-            <li>Multiplication: 2 * 3 </li>
-            <li>Division: 2 / 3 </li>
-            <li>Modulo: 2 % 3 </li>
-            <li>Exponentiation: 2 ** 3 or 2 ^ 3 </li>
+            <li>Addition: <code>2 + 3</code> </li>
+            <li>Subtraction: <code>2 - 3</code> </li>
+            <li>Multiplication: <code>2 * 3</code> </li>
+            <li>Division: <code>2 / 3</code> </li>
+            <li>Modulo: <code>2 % 3</code> </li>
+            <li>Exponentiation: <code>2 ** 3</code> or <code>2 ^ 3</code> </li>
         </ul>
         <p>Inbuilt functions:</p>
 
@@ -58,44 +58,44 @@
             <li>
                 Trigonometry (take radians as input):
                 <ul>
-                    <li>Sine: sin x</li>
-                    <li>Arc sine: asin x</li>
-                    <li>Cosine: cos x</li>
-                    <li>Arc cosine: acos x</li>
-                    <li>Tangent: tan x</li>
-                    <li>Arc tangent: atan x</li>
+                    <li>Sine: <code>sin x</code></li>
+                    <li>Arc sine: <code>asin x</code></li>
+                    <li>Cosine: <code>cos x</code></li>
+                    <li>Arc cosine: <code>acos x</code></li>
+                    <li>Tangent: <code>tan x</code></li>
+                    <li>Arc tangent: <code>atan x</code></li>
                 </ul>
             </li>
             <li>
                 Roots:
                 <ul>
-                    <li>Square root: sqrt x or q x </li>
-                    <li>Cube root: cbrt x or c x </li>
+                    <li>Square root: <code>sqrt x</code> c or <code>q x</code> </li>
+                    <li>Cube root: <code>cbrt x</code> c or <code>c x</code> </li>
                 </ul>
             </li>
             <li>
                 Other:
                 <ul>
-                    <li>Absolute value: abs x</li>
-                    <li>Logarithm base 10: log x</li>
-                    <li>Natural logarithm: ln x</li>
-                    <li>Round value to whole number: round x</li>
-                    <li>Floor value to whole number: floor x</li>
-                    <li>Ceiling value to whole number: ceil x</li>
+                    <li>Absolute value: <code>abs x</code></li>
+                    <li>Logarithm base 10: <code>log x</code></li>
+                    <li>Natural logarithm: <code>ln x</code></li>
+                    <li>Round value to whole number: <code>round x</code></li>
+                    <li>Floor value to whole number: <code>floor x</code></li>
+                    <li>Ceiling value to whole number: <code>ceil x</code></li>
                 </ul>
             </li>
         </ul>
 
         <p>Variables/memory:</p>
         <ul>
-            <li>Set variable: $x = 5 </li>
-            <li>Use variable: $x * 2 </li>
+            <li>Set variable: <code>$x = 5</code> </li>
+            <li>Use variable: <code>$x * 2</code> </li>
         </ul>
 
         <p>Custom functions:</p>
         <ul>
-            <li>Define function: $cmToInches => $cm / 2.54</li>
-            <li>Run function: $inches = &cmToInches</li>
+            <li>Define function: <code>$cmToInches => $cm / 2.54</code></li>
+            <li>Run function: <code>$cm = 50; $inches = &cmToInches</code></li>
             <li>Currently functions do not support arguments (they're a WIP), so if you want them to do anything useful you need to make them use the global variables (all variables are global).</li>
         </ul>
     </body>

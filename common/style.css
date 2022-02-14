@@ -1,3 +1,9 @@
 * {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #ebebeb;
+    color: #b31b1b;
+}
