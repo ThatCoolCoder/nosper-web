@@ -23,11 +23,11 @@ const UnaryOperator = {
     // Trig:
     [TokenSubType.NEGATE]: a => -a,
     [TokenSubType.SINE]: (a, ctx) => Math.sin(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
-    [TokenSubType.ARC_SINE]: (a, ctx) => Math.asin(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
+    [TokenSubType.ARC_SINE]: (a, ctx) => convertFromRadians(Math.asin(a.evaluate(ctx)), ctx.useRadians),
     [TokenSubType.COSINE]: (a, ctx) => Math.cos(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
-    [TokenSubType.ARC_COSINE]: (a, ctx) => Math.acos(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
+    [TokenSubType.ARC_COSINE]: (a, ctx) => convertFromRadians(Math.acos(a.evaluate(ctx)), ctx.useRadians),
     [TokenSubType.TANGENT]: (a, ctx) => Math.tan(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
-    [TokenSubType.ARC_TANGENT]: (a, ctx) => Math.atan(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
+    [TokenSubType.ARC_TANGENT]: (a, ctx) => convertFromRadians(Math.atan(a.evaluate(ctx)), ctx.useRadians),
 
     // Not trig
     [TokenSubType.SQUARE_ROOT]: (a, ctx) => Math.sqrt(a.evaluate(ctx)),
@@ -44,6 +44,11 @@ function convertToRadians(angle, isRadians) {
     // convert an angle to radians, regardless of whether it's radians or degrees
     if (isRadians) return angle;
     else return spnr.radians(angle)
+}
+
+function convertFromRadians(angle, toRadians) {
+    if (toRadians) return angle;
+    else return spnr.degrees(angle);
 }
 
 class SyntaxTreeNode {
