@@ -17,15 +17,28 @@ class Evaluator {
     constructor() {
         this.context = new EvaluationContext();
         this.tokeniser = new Tokeniser();
+
+        this.expressionSplitter = ';';
     }
 
-    evaluate(expression) {
+    /**
+     * Evaluate multiple expressions separated by this.expressionSplitter 
+     */
+    evaluate(expressions) {
+        expressions = expressions.split(this.expressionSplitter);
+        var results = expressions.map(e => this.evaluateSingleExpression(e));
+        return results[results.length - 1];
+    }
+
+    /**
+     * Evaluate a single expression
+     */
+    evaluateSingleExpression(expression) {
         var tokens = this.tokeniser.tokeniseExpression(expression);
         console.log(tokens)
         var syntaxTree = this.buildSyntaxTree(tokens);
         return syntaxTree.evaluate(this.context);
     }
-
 
     buildSyntaxTree(tokens) {
         // If there is only 1 token left then 
