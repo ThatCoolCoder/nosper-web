@@ -11,9 +11,6 @@ const expressionInput = new ExpressionInput('mainInput', calculate, inputHistory
 function calculate() {
     var expression = expressionInput.value;
     if (expression == '') return;
-    inputHistory.push(expression);
-    inputHistory.toEnd();
-    inputHistory.save();
 
     evaluator.context.useRadians = ! degreesCheckbox.checked;
 

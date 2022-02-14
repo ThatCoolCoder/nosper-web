@@ -16,21 +16,26 @@ class ExpressionInput {
 
         this.element.addEventListener('keydown', event => {
             if (event.code == 'Enter' && this.onExpressionEntered != null) {
+                this.inputHistory?.push(this.element.value);
+                this.inputHistory?.toEnd();
+                this.inputHistory?.save();
+
                 this.onExpressionEntered(this.element.value);
             }
-            if (this.inputHistory != null) {
-                if (event.code == 'ArrowUp') {
-                    event.preventDefault();
-                    inputHistory.previous();
-                    this.element.value = inputHistory.crntCommand;
+            if (event.code == 'ArrowUp' && this.inputHistory != null) {
+                event.preventDefault();
+                this.inputHistory?.previous();
+                this.element.value = this.inputHistory.crntCommand;
+            }
+            else if (event.code == 'ArrowDown' && this.inputHistory != null) {
+                event.preventDefault();
+                if (this.element.value != '') {
+                    this.inputHistory.next();
+                    this.element.value = this.inputHistory.crntCommand;
                 }
-                else if (event.code == 'ArrowDown') {
-                    event.preventDefault();
-                    if (this.element.value != '') {
-                        inputHistory.next();
-                        this.element.value = inputHistory.crntCommand;
-                    }
-                }
+            }
+            else if (this.inputHistory != null) {
+                this.inputHistory.pastEnd();
             }
         })
     }
