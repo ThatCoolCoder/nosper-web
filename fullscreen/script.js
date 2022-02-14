@@ -2,7 +2,8 @@ const errorOutput = spnr.dom.id('errorOutput');
 const degreesCheckbox = spnr.dom.id('degreesCheckbox');
 
 const evaluator = new Evaluator();
-const inputHistory = new InputHistory();
+const storer = window.chrome?.sync == undefined ? new LocalStorageStorer() : new ChromeStorageStorer();
+const inputHistory = new InputHistory(storer);
 inputHistory.load(() => {
     inputHistory.pastEnd()
 });

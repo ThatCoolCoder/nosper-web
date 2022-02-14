@@ -1,10 +1,11 @@
 class InputHistory {
-    constructor(profileName='default') {
+    constructor(storer, profileName='default') {
+        this.storer = storer;
         this.profileName = profileName;
         this.commands = [];
         this.crntIndex = 0;
         this.maxLength = 3;
-        this.chromeStorageKey = `naltonCalculatorHistory:${this.profileName}`;
+        this.storageKey = `naltonCalculatorHistory:${this.profileName}`;
     }
 
     push(value) {
@@ -45,19 +46,15 @@ class InputHistory {
     }
 
     load(callback=()=>{}) {
-        // Handy to be able to test calculator UI in other browsers so don't crash if we're not a chrome extension.
-        if (window.chrome == undefined) return;
-        chrome.storage.sync.get([this.chromeStorageKey], data => {
-            if (spnr.obj.keys(data).length != 0)
-                this.commands = data[this.chromeStorageKey];
+        this.storer.load(this.storageKey, data => {
+            this.commands = data == null ? [] : data;
             this.trim();
             callback();
         });
     }
 
     save() {
-        if (window.chrome == undefined) return;
-        chrome.storage.sync.set({[this.chromeStorageKey]: this.commands}, () => {});
+        this.storer.store(this.storageKey, this.commands);
     }
 
     trim() {
