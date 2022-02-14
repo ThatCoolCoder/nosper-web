@@ -1,56 +1,58 @@
 const TokenType = {
     BINARY_OPERATOR: 0,
-    UNARY_OPERATOR: 1,
-    VALUE: 2,
-    PAREN: 3,
-    FUNCTION_CALL: 4,
-    SEPARATOR: 5
+    UNARY_OPERATOR: 0,
+    VALUE: 0,
+    PAREN: 0,
+    FUNCTION_CALL: 0,
+    SEPARATOR: 0
 }
+spnr.obj.toEnum(TokenType);
 
 const TokenSubType = {
-    OTHER: -1,
+    OTHER: 0,
 
     // binary operator
     ADD: 0,
-    SUBTRACT: 1,
-    MULTIPLY: 2,
-    DIVIDE: 3,
-    MODULO: 4,
-    EXPONENTIATE: 5,
-    ASSIGN: 6,
-    FUNCTION_ASSIGN: 7,
+    SUBTRACT: 0,
+    MULTIPLY: 0,
+    DIVIDE: 0,
+    MODULO: 0,
+    EXPONENTIATE: 0,
+    ASSIGN: 0,
+    FUNCTION_ASSIGN: 0,
 
     // unary operator: trig
-    NEGATE: 8,
-    SINE: 9,
-    ARC_SINE: 10,
-    COSINE: 11,
-    ARC_COSINE: 12,
-    TANGENT: 13,
-    ARC_TANGENT: 14,
+    NEGATE: 0,
+    SINE: 0,
+    ARC_SINE: 0,
+    COSINE: 0,
+    ARC_COSINE: 0,
+    TANGENT: 0,
+    ARC_TANGENT: 0,
     // unary operator: not trig
-    SQUARE_ROOT: 15,
-    CUBE_ROOT: 16,
-    ABSOLUTE_VALUE: 17,
-    LOGARITHM: 18,
-    NATURAL_LOGARITHM: 19,
-    ROUND: 20,
-    FLOOR: 21,
-    CEILING: 22,
+    SQUARE_ROOT: 0,
+    CUBE_ROOT: 0,
+    ABSOLUTE_VALUE: 0,
+    LOGARITHM: 0,
+    NATURAL_LOGARITHM: 0,
+    ROUND: 0,
+    FLOOR: 0,
+    CEILING: 0,
 
     // value
-    LITERAL: 23,
-    VARIABLE: 24,
+    LITERAL: 0,
+    VARIABLE: 0,
 
     // paren
-    L_PAREN: 25,
-    R_PAREN: 26,
+    L_PAREN: 0,
+    R_PAREN: 0,
 
     // (function call has no subtypes)
 
     // separator
-    ARGUMENT_SEPARATOR: 24
+    ARGUMENT_SEPARATOR: 0
 }
+spnr.obj.toEnum(TokenSubType);
 
 // Higher precedence = evaluated first
 const OperatorPrecedence = {
