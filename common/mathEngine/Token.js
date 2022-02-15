@@ -6,7 +6,7 @@ const TokenType = {
     FUNCTION_CALL: 0,
     SEPARATOR: 0
 }
-spnr.obj.toEnum(TokenType);
+spnr.obj.toEnum(TokenType, true);
 
 const TokenSubType = {
     OTHER: 0,
@@ -52,7 +52,7 @@ const TokenSubType = {
     // separator
     ARGUMENT_SEPARATOR: 0
 }
-spnr.obj.toEnum(TokenSubType);
+spnr.obj.toEnum(TokenSubType, true);
 
 // Higher precedence = evaluated first
 const OperatorPrecedence = {
@@ -65,6 +65,7 @@ const OperatorPrecedence = {
     [TokenSubType.MODULO]: 2,
     [TokenSubType.EXPONENTIATE]: 3,
 
+    [TokenSubType.NEGATE]: 4,
     [TokenSubType.SINE]: 4,
     [TokenSubType.ARC_SINE]: 4,
     [TokenSubType.COSINE]: 4,

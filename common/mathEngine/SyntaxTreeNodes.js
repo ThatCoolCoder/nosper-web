@@ -21,7 +21,7 @@ const BinaryOperator = {
 
 const UnaryOperator = {
     // Trig:
-    [TokenSubType.NEGATE]: a => -a,
+    [TokenSubType.NEGATE]: (a, ctx) => -a.evaluate(ctx),
     [TokenSubType.SINE]: (a, ctx) => Math.sin(convertToRadians(a.evaluate(ctx), ctx.useRadians)),
     [TokenSubType.ARC_SINE]: (a, ctx) => convertFromRadians(Math.asin(a.evaluate(ctx)), ctx.useRadians),
     [TokenSubType.COSINE]: (a, ctx) => Math.cos(convertToRadians(a.evaluate(ctx), ctx.useRadians)),

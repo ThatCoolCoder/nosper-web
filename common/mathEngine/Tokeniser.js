@@ -80,6 +80,22 @@ class Tokeniser {
             }
             else if (spnr.str.digits.includes(this.crntChar)) {
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, Number(this.readNumber())));
+                
+                // Convert a subtraction operation into a negation operation in some cases
+                if (tokens.length >= 2) {
+                    var secondPrevious = tokens[tokens.length - 3];
+                    var secondPreviousIsOperator = false;
+                    if (secondPrevious == undefined) secondPreviousIsOperator = true;
+                    else {
+                        secondPreviousIsOperator = (secondPrevious.type == TokenType.UNARY_OPERATOR ||
+                            secondPrevious.type == TokenType.BINARY_OPERATOR);
+                    }
+                    var previous = tokens[tokens.length - 2];
+                    if (secondPreviousIsOperator && previous.subType == TokenSubType.SUBTRACT) {
+                        previous.type = TokenType.UNARY_OPERATOR;
+                        previous.subType = TokenSubType.NEGATE;
+                    }
+                }
             }
             else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'round', 'floor', 'ceil', 'sqrt', 'q', 'cbrt', 'c', 'abs', 'log', 'ln', ]) != null) {
                 var text = this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'round', 'floor', 'ceil', 'sqrt', 'q', 'cbrt', 'c', 'abs', 'log', 'ln']);
