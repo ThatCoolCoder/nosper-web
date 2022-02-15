@@ -80,22 +80,6 @@ class Tokeniser {
             }
             else if (spnr.str.digits.includes(this.crntChar)) {
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, Number(this.readNumber())));
-                
-                // Convert a subtraction operation into a negation operation in some cases
-                if (tokens.length >= 2) {
-                    var secondPrevious = tokens[tokens.length - 3];
-                    var secondPreviousIsOperator = false;
-                    if (secondPrevious == undefined) secondPreviousIsOperator = true;
-                    else {
-                        secondPreviousIsOperator = (secondPrevious.type == TokenType.UNARY_OPERATOR ||
-                            secondPrevious.type == TokenType.BINARY_OPERATOR);
-                    }
-                    var previous = tokens[tokens.length - 2];
-                    if (secondPreviousIsOperator && previous.subType == TokenSubType.SUBTRACT) {
-                        previous.type = TokenType.UNARY_OPERATOR;
-                        previous.subType = TokenSubType.NEGATE;
-                    }
-                }
             }
             else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'round', 'floor', 'ceil', 'sqrt', 'q', 'cbrt', 'c', 'abs', 'log', 'ln', ]) != null) {
                 var text = this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'round', 'floor', 'ceil', 'sqrt', 'q', 'cbrt', 'c', 'abs', 'log', 'ln']);
@@ -120,6 +104,8 @@ class Tokeniser {
                 this.next();
             }
         }
+
+        this.convertToNegations(tokens);
 
         return tokens;
     }
@@ -170,5 +156,21 @@ class Tokeniser {
             if (this.nextCharsEqualTo(value)) return value;
         }
         return null;
+    }
+
+    convertToNegations(tokens) {
+        // Convert a subtraction operation into a negation operation in some cases
+        var previous = null;
+        tokens.forEach((token, idx) => {
+            if (idx >= 1) {
+                var previousIsOperator = (previous.type == TokenType.UNARY_OPERATOR ||
+                    previous.type == TokenType.BINARY_OPERATOR);
+                if (previousIsOperator && token.subType == TokenSubType.SUBTRACT) {
+                    token.type = TokenType.UNARY_OPERATOR;
+                    token.subType = TokenSubType.NEGATE;
+                }
+            }
+            previous = token;
+        })
     }
 }
