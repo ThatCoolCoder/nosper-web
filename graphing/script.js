@@ -2,7 +2,7 @@ const errorOutput = spnr.dom.id('errorOutput');
 const degreesCheckbox = spnr.dom.id('degreesCheckbox');
 
 const evaluator = new Evaluator();
-const storer = window.chrome?.sync == undefined ? new LocalStorageStorer() : new ChromeStorageStorer();
+const storer = new AutoStorer();
 const inputHistory = new InputHistory(storer, 'graphing');
 inputHistory.load(() => {
     inputHistory.pastEnd();
