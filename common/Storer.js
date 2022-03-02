@@ -37,3 +37,12 @@ class ChromeStorageStorer extends Storer {
         });
     }
 }
+
+// AutoStorer: either a LocalStorageStorer or ChromeStorageStorer, depending if chrome storage is available
+var AutoStorer;
+if (window.chrome?.storage?.sync == undefined) {
+    AutoStorer = LocalStorageStorer;
+}
+else {
+    AutoStorer = ChromeStorageStorer;
+}
