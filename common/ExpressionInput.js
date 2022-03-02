@@ -15,7 +15,7 @@ class ExpressionInput {
         this.inputHistory = inputHistory;
 
         this.element.addEventListener('keydown', event => {
-            if (event.code == 'Enter' && this.onExpressionEntered != null) {
+            if ((event.code == 'Enter' || event.code == 'NumpadEnter') && this.onExpressionEntered != null) {
                 this.inputHistory?.push(this.element.value);
                 this.inputHistory?.toEnd();
                 this.inputHistory?.save();
