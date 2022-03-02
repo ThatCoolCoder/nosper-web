@@ -10,9 +10,9 @@
     </head>
     <body>
         <h1>Nalton Calculator - Graphing Mode</h1>
-        <p>Simple, open source and powerful</p>
+        <p>In graphing mode, an expression is evaluated for every point along a line. The variable <code>$x</code> is set for each increment. An example expression is <code>sin $x</code></p>
         <input id="mainInput" placeholder="Enter expression and press enter">
-        <button id="evaluateButton">Evaluate</button>
+        <button id="evaluateButton">Draw</button>
         <br />
         <label for="degreesCheckbox">Use angles in degrees</label>
         <input id="degreesCheckbox" type="checkbox" />
@@ -23,7 +23,7 @@
         <br />
         <br />
 
-        <canvas height="1000" width="2000" id="graph"></canvas>
+        <canvas id="graph"></canvas>
     </body>
 
     <script src="../common/spnr.min.js"></script>
