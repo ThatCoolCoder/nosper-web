@@ -64,9 +64,11 @@ class ValueNode extends SyntaxTreeNode {
     }
 
     evaluate(context) {
+        var topOfArgumentStack = context.argumentStack[context.argumentStack.length - 1];
         if (typeof (this.value) == 'number') return this.value;
+        else if (topOfArgumentStack != undefined && topOfArgumentStack.isDefined(this.value)) return topOfArgumentStack.get(this.value);
         else if (context.variables.isDefined(this.value)) return context.variables.get(this.value);
-        else return this.value;
+        else return this.value; // todo: throw an error on weird value
     }
 }
 
@@ -103,11 +105,10 @@ class FunctionCallNode extends SyntaxTreeNode {
     }
 
     evaluate(context) {
-        context.argumentStack.push(this.args.map(arg => {
-            arg.evaluate(context);
-        }));
+        var valueGroup = new ValueGroup();
+        this.args.forEach((arg, idx) => valueGroup.set(idx, arg.evaluate(context)));
+        context.argumentStack.push(valueGroup);
         var result = context.functions.get(this.name).evaluate(context);
-        console.log(result);
         context.argumentStack.pop();
         return result;
     }

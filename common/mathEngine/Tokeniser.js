@@ -4,8 +4,6 @@
 class Tokeniser {
     // Class to tokenise string
 
-    alphabet = spnr.str.lowerAlphabet.concat(spnr.str.upperAlphabet);
-
     // A purposefully incomplete table designed to make some lookups easier
     StringToTokenSubType = {
         // Binary operator
@@ -88,7 +86,7 @@ class Tokeniser {
             }
             else if (this.crntChar == '$') {
                 this.next();
-                tokens.push(new Token(TokenType.VALUE, TokenSubType.VARIABLE, this.readString()));
+                tokens.push(new Token(TokenType.VALUE, TokenSubType.VARIABLE, this.readStringWithDigits()));
             }
             else if (this.crntChar == '&') {
                 this.next();
@@ -140,11 +138,20 @@ class Tokeniser {
 
     readString() {
         var stringVal = '';
-        while (this.alphabet.includes(this.crntChar)) {
+        while (spnr.str.alphabet.includes(this.crntChar)) {
             stringVal += this.crntChar;
             this.next();
         }
         return stringVal;
+    }
+
+    readStringWithDigits() {
+        var value = '';
+        while (spnr.str.digits.includes(this.crntChar) || spnr.str.alphabet.includes(this.crntChar)) {
+            value += this.crntChar;
+            this.next();
+        }
+        return value;
     }
 
     nextCharsEqualTo(targetValue) {

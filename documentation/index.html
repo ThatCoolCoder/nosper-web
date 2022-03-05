@@ -94,9 +94,10 @@
 
         <p>Custom functions:</p>
         <ul>
-            <li>Define function: <code>$cmToInches => $cm / 2.54</code></li>
-            <li>Run function: <code>$cm = 50; $inches = &cmToInches</code></li>
-            <li>Currently functions do not support arguments (they're a WIP), so if you want them to do anything useful you need to make them use the global variables (all variables are global).</li>
+            <li>Define function: <code>$multiplyTwoNumbers => $0 * $1</code></li>
+            <li>Run function: <code>$result = &multiplyTwoNumbers(5, 5)</code> (result will be 25) </li>
+            <li>Function arguments are written into variables with the names <code>$0</code>, <code>$1</code> and so on.
+                Functions can also read and modify global variables if they wish.</li>
         </ul>
     </body>
 
