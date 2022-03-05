@@ -48,6 +48,8 @@ const TokenSubType = {
     R_PAREN: 0,
 
     // (function call has no subtypes)
+    UNPARSED_FUNCTION_CALL: 0,
+    PARSED_FUNCTION_CALL: 0,
 
     // separator
     ARGUMENT_SEPARATOR: 0
@@ -89,5 +91,12 @@ class Token {
         this.subType = subType;
         this.value = value;
         this.extraPrecedence = 0;
+    }
+}
+
+class ParsedFunctionCallToken extends Token {
+    constructor(type, subType, value, args) {
+        super(type, subType, value);
+        this.args = args;
     }
 }
