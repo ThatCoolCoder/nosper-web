@@ -33,8 +33,13 @@ function calculate() {
 }
 
 function openHelp() {
-    var newURL = chrome.runtime.getURL('documentation/index.html');
-    chrome.tabs.create({ url: newURL });
+    if (window.chrome?.runtime?.getURL != undefined) {
+        var newURL = chrome.runtime.getURL('documentation/index.html');
+        chrome.tabs.create({ url: newURL });
+    }
+    else {
+        window.open('../documentation/index.html', '_blank');
+    }
 }
 
 spnr.dom.id('helpButton').addEventListener('click', openHelp);
