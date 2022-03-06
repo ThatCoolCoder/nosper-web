@@ -5,7 +5,9 @@ class EvaluationContext {
     constructor() {
         this.variables = new ValueGroup({
             pi: spnr.PI,
-            e: spnr.E
+            e: spnr.E,
+            phi: (1 + spnr.sqrt(5)) / 2, // (aka the golden ratio)
+            silv: spnr.SQRT2 + 1
         });
         this.functions = new ValueGroup();
         this.useRadians = true;

@@ -76,7 +76,7 @@ class Tokeniser {
                 tokens.push(new Token(TokenType.SEPARATOR, TokenSubType.ARGUMENT_SEPARATOR, this.crntChar));
                 this.next();
             }
-            else if (spnr.str.digits.includes(this.crntChar)) {
+            else if (spnr.str.digits.includes(this.crntChar) || this.crntChar == '.') {
                 tokens.push(new Token(TokenType.VALUE, TokenSubType.LITERAL, Number(this.readNumber())));
             }
             else if (this.nextCharsEqualToAny(['sin', 'asin', 'cos', 'acos', 'tan', 'atan', 'round', 'floor', 'ceil', 'sqrt', 'q', 'cbrt', 'c', 'abs', 'log', 'ln', ]) != null) {

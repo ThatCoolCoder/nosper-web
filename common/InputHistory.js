@@ -1,7 +1,9 @@
 class InputHistory {
-    constructor(storer, profileName='default') {
+    constructor(storer, profileName='default', collapseDuplicates=true) {
         this.storer = storer;
         this.profileName = profileName;
+        this.collapseDuplicates = collapseDuplicates;
+
         this.commands = [];
         this.crntIndex = 0;
         this.maxLength = 3;
@@ -10,6 +12,7 @@ class InputHistory {
 
     push(value) {
         this.commands.push(value);
+        this.commands = this.commands.filter((value, idx) => this.commands[idx - 1] !== value);
         this.trim();
     }
 
