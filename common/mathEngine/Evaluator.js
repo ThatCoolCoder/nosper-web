@@ -158,7 +158,8 @@ class Evaluator {
         var index = 0;
         for (var token of tokens) {
             if (token.subType in OperatorPrecedence) {
-                if (OperatorPrecedence[token.subType] + token.extraPrecedence < lowestPrecedence) {
+                // use <= here because later tokens with otherwise identical precedence have less precedence
+                if (OperatorPrecedence[token.subType] + token.extraPrecedence <= lowestPrecedence) {
                     lowestPrecedence = OperatorPrecedence[token.subType] + token.extraPrecedence;
                     lowestPrecedenceIndex = index;
                 }
