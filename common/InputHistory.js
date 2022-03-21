@@ -6,7 +6,7 @@ class InputHistory {
 
         this.commands = [];
         this.crntIndex = 0;
-        this.maxLength = 3;
+        this.maxLength = 100;
         this.storageKey = `naltonCalculatorHistory:${this.profileName}`;
     }
 

@@ -1,5 +1,6 @@
 #mainInput {
     min-width: 50vw;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #errorOutput {
