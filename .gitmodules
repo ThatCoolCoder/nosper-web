@@ -1,0 +1,4 @@
+[submodule "common/nosper-engine"]
+	path = common/nosper-engine
+	url = https://github.com/ThatCoolCoder/nosper-engine
+	branch = v1

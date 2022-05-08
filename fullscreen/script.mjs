@@ -1,3 +1,6 @@
+// import { Evaluator } from "../common/nosper-engine/src/Evaluator.mjs";
+import { spnr } from "./spnr.js";
+
 const errorOutput = spnr.dom.id('errorOutput');
 const degreesCheckbox = spnr.dom.id('degreesCheckbox');
 
