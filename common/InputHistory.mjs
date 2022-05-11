@@ -1,4 +1,4 @@
-class InputHistory {
+export class InputHistory {
     constructor(storer, profileName='default', collapseDuplicates=true) {
         this.storer = storer;
         this.profileName = profileName;

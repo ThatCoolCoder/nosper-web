@@ -2,7 +2,7 @@
  * Input for math expressions with features like input history and evaluate on enter press.
  * @class
  */
-class ExpressionInput {
+export class ExpressionInput {
     /**
      * 
      * @param {string|HTMLInputElement} elementOrId - id of element or an element. Element must have a `.value`. 

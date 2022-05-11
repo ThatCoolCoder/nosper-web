@@ -3,7 +3,7 @@
  * @class
  * @abstract
  */
-class Storer {
+export class Storer {
     store(key, data) {
         console.error("Storer.store was not overridden");
     }
@@ -13,7 +13,7 @@ class Storer {
     }
 }
 
-class LocalStorageStorer extends Storer {
+export class LocalStorageStorer extends Storer {
     store(key, data) {
         localStorage[key] = JSON.stringify(data);
     }
@@ -25,7 +25,7 @@ class LocalStorageStorer extends Storer {
     }
 }
 
-class ChromeStorageStorer extends Storer {
+export class ChromeStorageStorer extends Storer {
     store(key, data) {
         chrome.storage.sync.set({[key]: data}, () => {});
     }
@@ -39,7 +39,7 @@ class ChromeStorageStorer extends Storer {
 }
 
 // AutoStorer: either a LocalStorageStorer or ChromeStorageStorer, depending if chrome storage is available
-var AutoStorer;
+export var AutoStorer;
 if (window.chrome?.storage?.sync == undefined) {
     AutoStorer = LocalStorageStorer;
 }
